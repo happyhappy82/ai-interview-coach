@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { EmailSignInForm } from '@/components/auth/email-sign-in-form'
+import { GoogleSignInButton } from '@/components/auth/google-sign-in-button'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -28,7 +29,15 @@ export default async function LandingPage() {
           </p>
         </div>
 
-        <div className="pt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
+        <div className="pt-8 flex flex-col gap-4 items-center justify-center max-w-md mx-auto">
+          <GoogleSignInButton />
+
+          <div className="flex items-center gap-4 w-full">
+            <div className="h-px bg-border flex-1" />
+            <span className="text-sm text-muted-foreground">또는</span>
+            <div className="h-px bg-border flex-1" />
+          </div>
+
           <EmailSignInForm />
         </div>
 
