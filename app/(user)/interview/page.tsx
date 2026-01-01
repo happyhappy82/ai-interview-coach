@@ -185,27 +185,32 @@ export default function InterviewPage() {
 
   return (
     <InAppBrowserBlocker>
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <div className="min-h-screen gradient-mesh p-6 md:p-12">
+        <div className="container mx-auto max-w-4xl space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between animate-fade-in">
             <Link href="/dashboard">
-              <Button variant="outline" className="rounded-xl">
+              <Button variant="outline" className="rounded-2xl px-6 py-3 shadow-soft hover:shadow-glow transition-all">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 뒤로 가기
               </Button>
             </Link>
-            <div className="text-sm text-muted-foreground">
-              {!isLoading && `${currentQuestionIndex + 1} / ${questions.length}`}
-            </div>
+            {!isLoading && (
+              <div className="glass px-6 py-3 rounded-2xl shadow-soft">
+                <span className="text-sm font-semibold">
+                  <span className="text-gradient">{currentQuestionIndex + 1}</span>
+                  <span className="text-muted-foreground"> / {questions.length}</span>
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Progress Bar */}
           {!isLoading && questions.length > 0 && (
-            <div className="mb-8">
-              <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div className="glass rounded-full p-1 shadow-soft">
+              <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500 rounded-full shadow-glow"
                   style={{
                     width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
                   }}
@@ -216,35 +221,36 @@ export default function InterviewPage() {
 
           {/* Question Card */}
           {isLoading ? (
-            <Card className="rounded-xl shadow-premium mb-8">
-              <CardHeader>
-                <Skeleton className="h-6 w-24 mb-2" />
-                <Skeleton className="h-8 w-full" />
-              </CardHeader>
-            </Card>
+            <div className="glass rounded-3xl p-8 shadow-premium-lg">
+              <Skeleton className="h-6 w-32 mb-4 bg-muted/30" />
+              <Skeleton className="h-12 w-full bg-muted/30" />
+            </div>
           ) : currentQuestion ? (
-            <Card className="rounded-xl shadow-premium mb-8">
-              <CardHeader>
-                <CardDescription>질문 {currentQuestionIndex + 1}</CardDescription>
-                <CardTitle className="text-2xl leading-relaxed">
+            <div className="glass rounded-3xl p-8 md:p-12 shadow-premium-lg">
+              <div className="space-y-6">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20">
+                  <span className="text-sm font-semibold text-primary">질문 {currentQuestionIndex + 1}</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold leading-relaxed text-gradient">
                   {currentQuestion.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  아래 버튼을 눌러 녹음을 시작하고, 질문에 대한 답변을 말씀해주세요.
-                  답변이 끝나면 정지 버튼을 누르세요.
-                </p>
-              </CardContent>
-            </Card>
+                </h2>
+                <div className="flex items-start space-x-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
+                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-white text-xs font-bold">💡</span>
+                  </div>
+                  <p className="text-sm text-foreground/80 leading-relaxed">
+                    아래 버튼을 눌러 녹음을 시작하고, 질문에 대한 답변을 말씀해주세요.
+                    답변이 끝나면 정지 버튼을 누르세요.
+                  </p>
+                </div>
+              </div>
+            </div>
           ) : (
-            <Card className="rounded-xl shadow-premium mb-8">
-              <CardContent className="pt-6">
-                <p className="text-center text-muted-foreground">
-                  질문을 불러올 수 없습니다.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="glass rounded-3xl p-8 shadow-premium-lg">
+              <p className="text-center text-muted-foreground">
+                질문을 불러올 수 없습니다.
+              </p>
+            </div>
           )}
 
           {/* Audio Recorder */}
@@ -258,26 +264,54 @@ export default function InterviewPage() {
 
           {/* Upload Loading */}
           {isUploading && (
-            <Card className="rounded-xl shadow-premium mt-4">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-center space-x-3">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            <div className="glass rounded-3xl p-8 shadow-premium-lg animate-glow">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-glow">
+                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                </div>
+                <div className="text-center space-y-1">
+                  <p className="font-semibold text-lg">답변 처리 중</p>
                   <p className="text-sm text-muted-foreground">
-                    녹음 파일을 업로드하는 중...
+                    녹음 파일을 업로드하고 있습니다...
                   </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Instructions */}
-          <div className="mt-8 bg-muted rounded-xl p-6 space-y-3">
-            <h3 className="font-semibold">💡 면접 팁</h3>
-            <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
-              <li>STAR 기법(Situation, Task, Action, Result)을 활용하세요</li>
-              <li>구체적인 사례와 수치를 포함하면 더 좋은 평가를 받을 수 있습니다</li>
-              <li>명확하고 자신감 있게 답변하세요</li>
-              <li>녹음은 자동으로 저장되며, 네트워크가 끊겨도 안전합니다</li>
+          <div className="glass rounded-3xl p-8 shadow-soft">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
+                <span className="text-2xl">💡</span>
+              </div>
+              <h3 className="text-xl font-bold">면접 팁</h3>
+            </div>
+            <ul className="space-y-3">
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  <span className="font-semibold text-primary">STAR 기법</span>을 활용하세요 (Situation, Task, Action, Result)
+                </p>
+              </li>
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  구체적인 사례와 수치를 포함하면 더 좋은 평가를 받을 수 있습니다
+                </p>
+              </li>
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  명확하고 자신감 있게 답변하세요
+                </p>
+              </li>
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  녹음은 자동으로 저장되며, 네트워크가 끊겨도 안전합니다
+                </p>
+              </li>
             </ul>
           </div>
         </div>
