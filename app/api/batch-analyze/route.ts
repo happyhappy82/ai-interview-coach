@@ -85,7 +85,22 @@ export async function POST(request: Request) {
       )
       .join('\n')
 
-    const prompt = `${promptData.content}\n\n면접자가 다음 질문들에 답변했습니다:\n\n${answersText}\n\n위 답변들을 종합적으로 분석하여 JSON 형식으로 반환해주세요.`
+    const prompt = `**중요: 반드시 순수 JSON만 출력하세요. 마크다운 코드 블록(백틱)이나 설명 없이 { 로 시작하는 JSON 객체만 반환하세요.**
+
+${promptData.content}
+
+면접자가 다음 질문들에 답변했습니다:
+
+${answersText}
+
+위 답변들을 종합적으로 분석하여 아래 형식의 순수 JSON만 출력하세요:
+{
+  "good": ["잘한 점 1", "잘한 점 2", ...],
+  "bad": ["개선할 점 1", "개선할 점 2", ...],
+  "keywords": ["키워드1", "키워드2", ...],
+  "score": 85,
+  "summary": "종합 평가 요약"
+}`
 
     console.log('Gemini API 호출 시작...')
     console.log('Prompt 길이:', prompt.length)
@@ -137,14 +152,20 @@ export async function POST(request: Request) {
     // JSON 파싱 시도
     let feedback
     try {
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/)
+      // 1. 백틱 코드 블록 제거 (```json ... ``` 형태)
+      let cleanedText = generatedText.replace(/```json\s*/g, '').replace(/```\s*/g, '')
+
+      // 2. JSON 객체 추출
+      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/)
       if (jsonMatch) {
         feedback = JSON.parse(jsonMatch[0])
+        console.log('JSON 파싱 성공:', feedback)
       } else {
         throw new Error('No JSON found in response')
       }
     } catch (parseError) {
       console.error('JSON parse error:', parseError)
+      console.error('원본 응답:', generatedText)
       feedback = {
         good: ['답변을 제공해주셔서 감사합니다.'],
         bad: ['AI 분석 중 오류가 발생했습니다. 다시 시도해주세요.'],
