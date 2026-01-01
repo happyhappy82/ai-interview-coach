@@ -6,38 +6,38 @@
 
 @layer base {
   :root {
-    /* Premium Design System - Deep Indigo Theme */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Apple/OpenAI Inspired Clean Design System */
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Primary: Deep Indigo (#4F46E5) */
-    --primary: 239 84% 60%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary: Elegant Blue (#3B82F6) */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Light Gray */
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary: Ultra Light Gray */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 239 84% 60%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -83,19 +83,55 @@
 }
 
 @layer utilities {
-  /* Premium shadow system */
+  /* Apple/OpenAI Shadow System */
   .shadow-premium {
-    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1),
-                0 2px 4px -1px rgba(79, 70, 229, 0.06);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05),
+                0 1px 2px -1px rgba(0, 0, 0, 0.05);
   }
 
   .shadow-premium-lg {
-    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.1),
-                0 4px 6px -2px rgba(79, 70, 229, 0.05);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08),
+                0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-premium-xl {
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.12),
+                0 12px 18px -8px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Glassmorphism Effect */
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10;
+  }
+
+  /* Gradient Backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .gradient-mesh {
+    background:
+      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
   }
 
   /* Clean animations */
   .transition-smooth {
     @apply transition-all duration-300 ease-in-out;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-premium-lg;
+  }
+
+  /* Text Gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
   }
 }
