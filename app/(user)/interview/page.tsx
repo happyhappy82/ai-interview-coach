@@ -76,8 +76,21 @@ export default function InterviewPage() {
 
       // 1. Storage 업로드만 수행 (AI 분석은 나중에 일괄 처리)
       console.log('1. 파일 업로드 시작...')
+
+      // Blob의 MIME 타입에서 확장자 추출 (Safari/macOS 호환성)
+      const getExtensionFromMime = (mimeType: string) => {
+        if (mimeType.includes('webm')) return 'webm'
+        if (mimeType.includes('mp4')) return 'mp4'
+        if (mimeType.includes('aac')) return 'aac'
+        if (mimeType.includes('wav')) return 'wav'
+        return 'webm' // fallback
+      }
+
+      const extension = getExtensionFromMime(blob.type)
+      console.log('Blob MIME type:', blob.type, 'Extension:', extension)
+
       const formData = new FormData()
-      formData.append('file', blob, `interview_${Date.now()}.webm`)
+      formData.append('file', blob, `interview_${Date.now()}.${extension}`)
       formData.append('questionId', currentQuestion.id)
 
       const uploadResponse = await fetch('/api/upload', {
