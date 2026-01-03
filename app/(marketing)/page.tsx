@@ -18,8 +18,8 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen gradient-mesh flex flex-col items-center justify-center p-4 sm:p-6 md:p-12">
-      <div className="w-full max-w-6xl mx-auto">
+    <div className="min-h-screen gradient-mesh flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 lg:p-12">
+      <div className="w-full max-w-6xl mx-auto px-2 sm:px-4">
         {/* Hero Section */}
         <div className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 animate-fade-in">
           <div className="space-y-4 sm:space-y-6">

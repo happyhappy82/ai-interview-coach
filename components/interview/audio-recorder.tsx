@@ -109,14 +109,14 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
 
       {/* 녹음 UI */}
       <Card className="rounded-xl shadow-premium">
-        <CardContent className="pt-6">
-          <div className="space-y-6">
+        <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Duration 표시 */}
             <div className="text-center">
-              <div className="text-4xl font-mono font-bold text-foreground">
+              <div className="text-3xl sm:text-4xl font-mono font-bold text-foreground">
                 {formatDuration(duration)}
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
                 {isRecording && '녹음 중...'}
                 {isPaused && '일시정지'}
                 {isStopped && '녹음 완료'}
@@ -153,22 +153,21 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
 
             {/* Transcript 표시 (실시간) */}
             {isSpeechSupported && transcript && isRecording && (
-              <div className="bg-muted rounded-lg p-4 max-h-32 overflow-y-auto">
-                <p className="text-sm text-muted-foreground mb-1">실시간 음성 인식:</p>
-                <p className="text-sm leading-relaxed">{transcript}</p>
+              <div className="bg-muted rounded-lg p-3 sm:p-4 max-h-24 sm:max-h-32 overflow-y-auto">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-1">실시간 음성 인식:</p>
+                <p className="text-xs sm:text-sm leading-relaxed">{transcript}</p>
               </div>
             )}
 
             {/* 컨트롤 버튼 */}
-            <div className="flex items-center justify-center space-x-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-3">
               {state === 'idle' && (
                 <Button
                   onClick={handleStart}
                   disabled={disabled}
-                  size="lg"
-                  className="rounded-xl px-8"
+                  className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                 >
-                  <Mic className="mr-2 h-5 w-5" />
+                  <Mic className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   녹음 시작
                 </Button>
               )}
@@ -178,19 +177,17 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                   <Button
                     onClick={handlePause}
                     variant="outline"
-                    size="lg"
-                    className="rounded-xl"
+                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
-                    <Pause className="mr-2 h-5 w-5" />
+                    <Pause className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     일시정지
                   </Button>
                   <Button
                     onClick={handleStop}
                     variant="destructive"
-                    size="lg"
-                    className="rounded-xl"
+                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
-                    <Square className="mr-2 h-5 w-5" />
+                    <Square className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     정지
                   </Button>
                 </>
@@ -200,19 +197,17 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                 <>
                   <Button
                     onClick={handleResume}
-                    size="lg"
-                    className="rounded-xl"
+                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
-                    <Play className="mr-2 h-5 w-5" />
+                    <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     재개
                   </Button>
                   <Button
                     onClick={handleStop}
                     variant="destructive"
-                    size="lg"
-                    className="rounded-xl"
+                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
-                    <Square className="mr-2 h-5 w-5" />
+                    <Square className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     정지
                   </Button>
                 </>
@@ -226,20 +221,18 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                         onRecordingComplete(audioBlob, duration, transcript)
                       }
                     }}
-                    size="lg"
-                    className="rounded-xl px-8"
+                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                     disabled={!audioBlob || disabled}
                   >
-                    <Upload className="mr-2 h-5 w-5" />
+                    <Upload className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     제출하고 다음으로
                   </Button>
                   <Button
                     onClick={handleClear}
                     variant="outline"
-                    size="lg"
-                    className="rounded-xl"
+                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
-                    <Trash2 className="mr-2 h-5 w-5" />
+                    <Trash2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     다시 녹음
                   </Button>
                 </>
@@ -251,14 +244,13 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
 
       {/* 안내 메시지 */}
       {state === 'idle' && !error && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
-          <p className="text-sm text-blue-900">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+          <p className="text-xs sm:text-sm text-blue-900 leading-relaxed">
             💡 <strong>팁:</strong> 조용한 환경에서 명확하게 답변해주세요.
-            녹음은 자동으로 저장되며, 네트워크가 끊겨도 안전합니다.
           </p>
           {isSpeechSupported && (
             <p className="text-xs text-blue-700">
-              🎙️ 실시간 음성 인식이 활성화됩니다. 답변 내용이 자동으로 텍스트로 변환됩니다.
+              🎙️ 실시간 음성 인식이 활성화됩니다.
             </p>
           )}
         </div>

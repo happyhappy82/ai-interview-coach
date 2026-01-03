@@ -202,8 +202,8 @@ export default function InterviewPage() {
 
   return (
     <InAppBrowserBlocker>
-      <div className="min-h-screen gradient-mesh p-4 sm:p-6 md:p-8 lg:p-12">
-        <div className="container mx-auto max-w-4xl space-y-6 sm:space-y-8">
+      <div className="min-h-screen gradient-mesh p-2 sm:p-4 md:p-6 lg:p-12">
+        <div className="container mx-auto max-w-4xl space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between animate-fade-in gap-2">
             <Link href="/dashboard">
@@ -282,14 +282,14 @@ export default function InterviewPage() {
 
           {/* Upload Loading */}
           {isUploading && (
-            <div className="glass rounded-3xl p-8 shadow-premium-lg animate-glow">
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-glow">
-                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+            <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-premium-lg animate-glow">
+              <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-glow">
+                  <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-white" />
                 </div>
-                <div className="text-center space-y-1">
-                  <p className="font-semibold text-lg">답변 처리 중</p>
-                  <p className="text-sm text-muted-foreground">
+                <div className="text-center space-y-0.5 sm:space-y-1">
+                  <p className="font-semibold text-base sm:text-lg">답변 처리 중</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     녹음 파일을 업로드하고 있습니다...
                   </p>
                 </div>
@@ -298,36 +298,30 @@ export default function InterviewPage() {
           )}
 
           {/* Instructions */}
-          <div className="glass rounded-3xl p-8 shadow-soft">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
-                <span className="text-2xl">💡</span>
+          <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-soft">
+            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
+                <span className="text-xl sm:text-2xl">💡</span>
               </div>
-              <h3 className="text-xl font-bold">면접 팁</h3>
+              <h3 className="text-base sm:text-lg md:text-xl font-bold">면접 팁</h3>
             </div>
-            <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  <span className="font-semibold text-primary">STAR 기법</span>을 활용하세요 (Situation, Task, Action, Result)
+            <ul className="space-y-2 sm:space-y-3">
+              <li className="flex items-start space-x-2 sm:space-x-3">
+                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary mt-1.5 sm:mt-2 flex-shrink-0" />
+                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
+                  <span className="font-semibold text-primary">STAR 기법</span>을 활용하세요
                 </p>
               </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  구체적인 사례와 수치를 포함하면 더 좋은 평가를 받을 수 있습니다
+              <li className="flex items-start space-x-2 sm:space-x-3">
+                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary mt-1.5 sm:mt-2 flex-shrink-0" />
+                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
+                  구체적인 사례와 수치를 포함하세요
                 </p>
               </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <p className="text-sm text-foreground/80 leading-relaxed">
+              <li className="flex items-start space-x-2 sm:space-x-3">
+                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary mt-1.5 sm:mt-2 flex-shrink-0" />
+                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
                   명확하고 자신감 있게 답변하세요
-                </p>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <p className="text-sm text-foreground/80 leading-relaxed">
-                  녹음은 자동으로 저장되며, 네트워크가 끊겨도 안전합니다
                 </p>
               </li>
             </ul>
