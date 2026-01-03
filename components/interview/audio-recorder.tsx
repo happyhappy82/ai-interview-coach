@@ -108,7 +108,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
       </AnimatePresence>
 
       {/* 녹음 UI */}
-      <Card className="rounded-none sm:rounded-xl shadow-none sm:shadow-premium border-none sm:border">
+      <Card className="border-none">
         <CardContent className="pt-4 sm:pt-6 px-2 sm:px-6">
           <div className="space-y-4 sm:space-y-6">
             {/* Duration 표시 */}
@@ -165,7 +165,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                 <Button
                   onClick={handleStart}
                   disabled={disabled}
-                  className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                  className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                 >
                   <Mic className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   녹음 시작
@@ -177,7 +177,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                   <Button
                     onClick={handlePause}
                     variant="outline"
-                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                    className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
                     <Pause className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     일시정지
@@ -185,7 +185,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                   <Button
                     onClick={handleStop}
                     variant="destructive"
-                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                    className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
                     <Square className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     정지
@@ -197,7 +197,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                 <>
                   <Button
                     onClick={handleResume}
-                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                    className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
                     <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     재개
@@ -205,7 +205,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                   <Button
                     onClick={handleStop}
                     variant="destructive"
-                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                    className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
                     <Square className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     정지
@@ -221,7 +221,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                         onRecordingComplete(audioBlob, duration, transcript)
                       }
                     }}
-                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                    className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                     disabled={!audioBlob || disabled}
                   >
                     <Upload className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -230,7 +230,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
                   <Button
                     onClick={handleClear}
                     variant="outline"
-                    className="rounded-xl px-6 py-5 sm:px-8 text-sm sm:text-base"
+                    className="px-6 py-5 sm:px-8 text-sm sm:text-base"
                   >
                     <Trash2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     다시 녹음
@@ -244,7 +244,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
 
       {/* 안내 메시지 */}
       {state === 'idle' && !error && (
-        <div className="bg-blue-50 border border-blue-200 rounded-none sm:rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+        <div className="bg-blue-50/30 border border-blue-200/50 p-3 sm:p-4 space-y-1.5 sm:space-y-2">
           <p className="text-xs sm:text-sm text-blue-900 leading-relaxed">
             💡 <strong>팁:</strong> 조용한 환경에서 명확하게 답변해주세요.
           </p>

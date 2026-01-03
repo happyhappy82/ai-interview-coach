@@ -121,7 +121,7 @@ export default async function ResultDetailPage({
         {/* Header */}
         <div className="flex items-center justify-between animate-fade-in">
           <Link href="/dashboard">
-            <Button variant="outline" className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base">
+            <Button variant="outline" className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 transition-all text-sm sm:text-base">
               <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
               <span className="hidden sm:inline">대시보드</span>
               <span className="sm:hidden">뒤로</span>
@@ -130,7 +130,7 @@ export default async function ResultDetailPage({
         </div>
 
         {/* Title & Score */}
-        <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 lg:p-12 shadow-none sm:shadow-premium-xl">
+        <div className="bg-transparent p-4 sm:p-8 md:p-10 lg:p-12 ">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div className="space-y-2 sm:space-y-3">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -142,7 +142,7 @@ export default async function ResultDetailPage({
               </p>
             </div>
             {feedback.score && (
-              <div className="flex flex-col items-center px-6 sm:px-8 py-4 sm:py-6 rounded-3xl bg-gradient-to-br from-blue-500 to-purple-500 shadow-premium-xl">
+              <div className="flex flex-col items-center px-6 sm:px-8 py-4 sm:py-6 bg-gradient-to-br from-blue-500 to-purple-500">
                 <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">{feedback.score}</div>
                 <div className="text-xs sm:text-sm text-white/90 font-medium mt-1 sm:mt-2">종합 점수</div>
               </div>
@@ -154,7 +154,7 @@ export default async function ResultDetailPage({
           </p>
 
           {feedback.summary && (
-            <div className="bg-white/50 sm:glass rounded-none sm:rounded-2xl p-4 sm:p-6 border-l-4 border-primary shadow-none sm:shadow-soft">
+            <div className="bg-white/50 sm:glass rounded-none sm:rounded-2xl p-4 sm:p-6 border-l-4 border-primary ">
               <p className="text-sm leading-relaxed text-foreground/90 font-medium">{feedback.summary}</p>
             </div>
           )}
@@ -162,9 +162,9 @@ export default async function ResultDetailPage({
 
         {/* Good Points */}
         {feedback.good && feedback.good.length > 0 && (
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
+          <div className="bg-transparent p-4 sm:p-8 ">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
               <div>
@@ -189,9 +189,9 @@ export default async function ResultDetailPage({
 
         {/* Improvement Points */}
         {feedback.bad && feedback.bad.length > 0 && (
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
+          <div className="bg-transparent p-4 sm:p-8 ">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white">
                 <XCircle className="h-6 w-6" />
               </div>
               <div>
@@ -216,9 +216,9 @@ export default async function ResultDetailPage({
 
         {/* Keywords */}
         {feedback.keywords && feedback.keywords.length > 0 && (
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
+          <div className="bg-transparent p-4 sm:p-8 ">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white">
                 <Tag className="h-6 w-6" />
               </div>
               <div>
@@ -230,7 +230,7 @@ export default async function ResultDetailPage({
               {feedback.keywords.map((keyword, index) => (
                 <span
                   key={index}
-                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-primary/20 text-primary rounded-full text-sm font-semibold shadow-soft hover:shadow-glow transition-all"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-primary/20 text-primary text-sm font-semibold transition-all"
                 >
                   {keyword}
                 </span>
@@ -261,9 +261,9 @@ export default async function ResultDetailPage({
 
         {/* 질문별 답변 & 오디오 */}
         {feedback.answers && feedback.answers.length > 0 && (
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
+          <div className="bg-transparent p-4 sm:p-8 ">
             <div className="flex items-center space-x-3 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white">
                 <span className="text-2xl">🎧</span>
               </div>
               <div>
@@ -274,22 +274,22 @@ export default async function ResultDetailPage({
 
             <div className="space-y-6">
               {feedback.answers.map((answer, index) => (
-                <div key={index} className="p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-border/50 space-y-4">
+                <div key={index} className="p-6 bg-white/30 border border-border/50 space-y-4">
                   <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center flex-shrink-0">
                       <span className="text-rose-600 text-sm font-bold">Q{index + 1}</span>
                     </div>
                     <div className="flex-1">
                       <h4 className="font-bold text-lg mb-3">{answer.questionTitle}</h4>
                       {answer.audioUrl ? (
-                        <audio src={answer.audioUrl} controls className="w-full rounded-xl shadow-soft mb-3" />
+                        <audio src={answer.audioUrl} controls className="w-full mb-3" />
                       ) : (
-                        <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-200 mb-3">
+                        <div className="p-4 bg-yellow-50/50 border border-yellow-200/50 mb-3">
                           <p className="text-sm text-yellow-800">오디오 파일을 찾을 수 없습니다.</p>
                         </div>
                       )}
                       {answer.transcript && (
-                        <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
+                        <div className="p-4 bg-muted/30 border border-border/30">
                           <p className="text-xs text-muted-foreground font-semibold mb-2">녹취록</p>
                           <p className="text-sm text-foreground/80 leading-relaxed">{answer.transcript}</p>
                         </div>
@@ -305,19 +305,19 @@ export default async function ResultDetailPage({
         {/* Actions */}
         <div className="grid sm:grid-cols-2 gap-4">
           <Link href="/interview" className="block">
-            <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all">
+            <Button className="w-full py-7 text-lg transition-all">
               다시 면접 보기
             </Button>
           </Link>
-          <Button variant="outline" className="rounded-2xl py-7 text-lg shadow-soft" disabled>
+          <Button variant="outline" className="py-7 text-lg" disabled>
             전문가 상담 신청 (준비 중)
           </Button>
         </div>
 
         {/* Tips */}
-        <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg border-0 sm:border sm:border-blue-200/50">
+        <div className="bg-transparent p-4 sm:p-8 border-0 sm:border sm:border-blue-200/50">
           <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center">
               <span className="text-2xl">💡</span>
             </div>
             <h3 className="text-xl font-bold">다음 면접을 위한 팁</h3>

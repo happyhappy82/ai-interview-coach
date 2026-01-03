@@ -39,7 +39,7 @@ export default async function UserDashboard() {
             </p>
           </div>
           <form action="/api/auth/signout" method="post">
-            <Button variant="outline" type="submit" className="rounded-2xl px-6 py-3 shadow-soft hover:shadow-glow transition-all">
+            <Button variant="outline" type="submit" className="px-6 py-3 transition-all">
               로그아웃
             </Button>
           </form>
@@ -47,10 +47,10 @@ export default async function UserDashboard() {
 
         {/* Stats */}
         {totalInterviews !== null && totalInterviews > 0 && (
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg hover-lift">
+          <div className="bg-transparent p-4 sm:p-8  hover-lift">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white">
                   <BarChart3 className="h-7 w-7" />
                 </div>
                 <div>
@@ -68,9 +68,9 @@ export default async function UserDashboard() {
 
         {/* Main Actions */}
         <div className="grid gap-2 sm:gap-6 md:grid-cols-2">
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg hover-lift group">
+          <div className="bg-transparent p-4 sm:p-8 hover-lift group">
             <div className="space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-3xl transition-shadow">
                 🎯
               </div>
               <div className="space-y-3">
@@ -80,16 +80,16 @@ export default async function UserDashboard() {
                 </p>
               </div>
               <Link href="/interview" className="block">
-                <Button className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all">
+                <Button className="w-full py-6 text-lg transition-all">
                   면접 시작
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg hover-lift group">
+          <div className="bg-transparent p-4 sm:p-8 hover-lift group">
             <div className="space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
+              <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-3xl transition-shadow">
                 📊
               </div>
               <div className="space-y-3">
@@ -99,7 +99,7 @@ export default async function UserDashboard() {
                 </p>
               </div>
               <Link href="/result" className="block">
-                <Button variant="outline" className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all">
+                <Button variant="outline" className="w-full py-6 text-lg transition-all">
                   최신 결과 확인
                 </Button>
               </Link>
@@ -109,9 +109,9 @@ export default async function UserDashboard() {
 
         {/* Interview History */}
         {interviewHistory && interviewHistory.length > 0 && (
-          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
+          <div className="bg-transparent p-4 sm:p-8 ">
             <div className="flex items-center space-x-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white">
                 <FileText className="h-6 w-6" />
               </div>
               <div>
@@ -140,14 +140,14 @@ export default async function UserDashboard() {
                     href={`/result/${interview.id}`}
                     className="block"
                   >
-                    <div className="p-6 rounded-2xl border border-border/50 bg-white/50 backdrop-blur-sm hover:border-primary hover:bg-white/80 hover:shadow-soft transition-all cursor-pointer group">
+                    <div className="p-6 border border-border/50 bg-white/30 hover:border-primary hover:bg-white/50 transition-all cursor-pointer group">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-2">
                           <Clock className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm text-muted-foreground font-medium">{date}</span>
                         </div>
                         {feedback.score && (
-                          <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-glow">
+                          <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white">
                             <TrendingUp className="h-4 w-4" />
                             <span className="text-lg font-bold">
                               {feedback.score}
