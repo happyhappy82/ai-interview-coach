@@ -120,12 +120,16 @@ export default function InterviewPage() {
       console.log('Upload success:', uploadData)
       const audioUrl = uploadData.url
 
+      // 서버에서 Gemini로 변환한 transcript 사용 (Safari/iOS 지원)
+      const finalTranscript = uploadData.transcript || transcript || ''
+      console.log('Final transcript:', finalTranscript ? '있음' : '없음')
+
       // 2. 답변을 로컬 배열에 저장 (AI 분석은 마지막에 일괄 처리)
       const newAnswer: Answer = {
         questionId: currentQuestion.id,
         questionTitle: currentQuestion.title,
         audioUrl,
-        transcript: transcript || '',
+        transcript: finalTranscript,
         duration,
       }
 

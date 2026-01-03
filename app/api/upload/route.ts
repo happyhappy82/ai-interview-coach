@@ -76,10 +76,62 @@ export async function POST(request: Request) {
       .from('interviews')
       .getPublicUrl(fileName)
 
+    // Gemini로 음성 인식 (Safari/iOS 지원)
+    let transcript = ''
+    try {
+      console.log('Gemini 음성 인식 시작...')
+      const geminiApiKey = process.env.GEMINI_API_KEY
+
+      if (geminiApiKey) {
+        // 파일을 ArrayBuffer로 읽기
+        const arrayBuffer = await file.arrayBuffer()
+        const base64Audio = Buffer.from(arrayBuffer).toString('base64')
+
+        const geminiResponse = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      inline_data: {
+                        mime_type: file.type,
+                        data: base64Audio,
+                      },
+                    },
+                    {
+                      text: '이 오디오 파일의 한국어 음성을 정확하게 텍스트로 변환해주세요. 오직 음성 내용만 텍스트로 출력하고, 다른 설명은 추가하지 마세요.',
+                    },
+                  ],
+                },
+              ],
+            }),
+          }
+        )
+
+        if (geminiResponse.ok) {
+          const geminiData = await geminiResponse.json()
+          transcript = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || ''
+          console.log('Gemini 음성 인식 완료:', transcript.substring(0, 50))
+        } else {
+          console.error('Gemini 음성 인식 실패:', await geminiResponse.text())
+        }
+      }
+    } catch (transcriptError) {
+      console.error('음성 인식 중 오류 (계속 진행):', transcriptError)
+      // 음성 인식 실패해도 업로드는 성공으로 처리
+    }
+
     return NextResponse.json({
       success: true,
       path: uploadData.path,
       url: urlData.publicUrl,
+      transcript, // 음성 인식 결과 추가
     })
   } catch (error) {
     console.error('Unexpected error:', error)
