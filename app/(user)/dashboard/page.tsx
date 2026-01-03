@@ -26,8 +26,8 @@ export default async function UserDashboard() {
     .limit(10)
 
   return (
-    <div className="min-h-screen gradient-mesh p-2 sm:p-4 md:p-6 lg:p-12">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
+    <div className="min-h-screen gradient-mesh p-1 sm:p-4 md:p-6 lg:p-12">
+      <div className="max-w-7xl mx-auto px-0 sm:px-4 space-y-2 sm:space-y-6 md:space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in">
           <div className="space-y-2">
@@ -47,7 +47,7 @@ export default async function UserDashboard() {
 
         {/* Stats */}
         {totalInterviews !== null && totalInterviews > 0 && (
-          <div className="glass rounded-3xl p-8 shadow-premium-lg hover-lift">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg hover-lift">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
@@ -67,8 +67,8 @@ export default async function UserDashboard() {
         )}
 
         {/* Main Actions */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="glass rounded-3xl p-8 shadow-premium-lg hover-lift group">
+        <div className="grid gap-2 sm:gap-6 md:grid-cols-2">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg hover-lift group">
             <div className="space-y-6">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
                 🎯
@@ -87,7 +87,7 @@ export default async function UserDashboard() {
             </div>
           </div>
 
-          <div className="glass rounded-3xl p-8 shadow-premium-lg hover-lift group">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg hover-lift group">
             <div className="space-y-6">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
                 📊
@@ -109,7 +109,7 @@ export default async function UserDashboard() {
 
         {/* Interview History */}
         {interviewHistory && interviewHistory.length > 0 && (
-          <div className="glass rounded-3xl p-8 shadow-premium-lg">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
             <div className="flex items-center space-x-4 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
                 <FileText className="h-6 w-6" />

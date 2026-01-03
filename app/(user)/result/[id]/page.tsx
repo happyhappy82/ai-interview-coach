@@ -116,8 +116,8 @@ export default async function ResultDetailPage({
   })
 
   return (
-    <div className="min-h-screen gradient-mesh p-2 sm:p-4 md:p-6 lg:p-12">
-      <div className="container mx-auto max-w-5xl space-y-4 sm:space-y-6 md:space-y-8">
+    <div className="min-h-screen gradient-mesh p-1 sm:p-4 md:p-6 lg:p-12">
+      <div className="container mx-auto max-w-5xl px-0 sm:px-4 space-y-2 sm:space-y-6 md:space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between animate-fade-in">
           <Link href="/dashboard">
@@ -130,7 +130,7 @@ export default async function ResultDetailPage({
         </div>
 
         {/* Title & Score */}
-        <div className="glass rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-premium-xl">
+        <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 lg:p-12 shadow-none sm:shadow-premium-xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div className="space-y-2 sm:space-y-3">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -154,7 +154,7 @@ export default async function ResultDetailPage({
           </p>
 
           {feedback.summary && (
-            <div className="glass rounded-2xl p-6 border-l-4 border-primary shadow-soft">
+            <div className="bg-white/50 sm:glass rounded-none sm:rounded-2xl p-4 sm:p-6 border-l-4 border-primary shadow-none sm:shadow-soft">
               <p className="text-sm leading-relaxed text-foreground/90 font-medium">{feedback.summary}</p>
             </div>
           )}
@@ -162,7 +162,7 @@ export default async function ResultDetailPage({
 
         {/* Good Points */}
         {feedback.good && feedback.good.length > 0 && (
-          <div className="glass rounded-3xl p-8 shadow-premium-lg">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white shadow-lg">
                 <CheckCircle2 className="h-6 w-6" />
@@ -189,7 +189,7 @@ export default async function ResultDetailPage({
 
         {/* Improvement Points */}
         {feedback.bad && feedback.bad.length > 0 && (
-          <div className="glass rounded-3xl p-8 shadow-premium-lg">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white shadow-lg">
                 <XCircle className="h-6 w-6" />
@@ -216,7 +216,7 @@ export default async function ResultDetailPage({
 
         {/* Keywords */}
         {feedback.keywords && feedback.keywords.length > 0 && (
-          <div className="glass rounded-3xl p-8 shadow-premium-lg">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
                 <Tag className="h-6 w-6" />
@@ -261,7 +261,7 @@ export default async function ResultDetailPage({
 
         {/* 질문별 답변 & 오디오 */}
         {feedback.answers && feedback.answers.length > 0 && (
-          <div className="glass rounded-3xl p-8 shadow-premium-lg">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
             <div className="flex items-center space-x-3 mb-8">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-lg">
                 <span className="text-2xl">🎧</span>
@@ -315,7 +315,7 @@ export default async function ResultDetailPage({
         </div>
 
         {/* Tips */}
-        <div className="glass rounded-3xl p-8 shadow-premium-lg border border-blue-200/50">
+        <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg border-0 sm:border sm:border-blue-200/50">
           <div className="flex items-center space-x-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center shadow-lg">
               <span className="text-2xl">💡</span>

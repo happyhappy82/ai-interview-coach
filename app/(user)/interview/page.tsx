@@ -202,8 +202,8 @@ export default function InterviewPage() {
 
   return (
     <InAppBrowserBlocker>
-      <div className="min-h-screen gradient-mesh p-2 sm:p-4 md:p-6 lg:p-12">
-        <div className="container mx-auto max-w-4xl space-y-3 sm:space-y-4 md:space-y-6 lg:space-y-8">
+      <div className="min-h-screen gradient-mesh p-1 sm:p-4 md:p-6 lg:p-12">
+        <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-4 md:space-y-6 lg:space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between animate-fade-in gap-2">
             <Link href="/dashboard">
@@ -239,13 +239,13 @@ export default function InterviewPage() {
 
           {/* Question Card */}
           {isLoading ? (
-            <div className="glass rounded-3xl p-8 shadow-premium-lg">
+            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
               <Skeleton className="h-6 w-32 mb-4 bg-muted/30" />
               <Skeleton className="h-12 w-full bg-muted/30" />
             </div>
           ) : currentQuestion ? (
-            <div className="glass rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-premium-lg">
-              <div className="space-y-4 sm:space-y-6">
+            <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 lg:p-12 shadow-none sm:shadow-premium-lg">
+              <div className="space-y-3 sm:space-y-6">
                 <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20">
                   <span className="text-xs sm:text-sm font-semibold text-primary">질문 {currentQuestionIndex + 1}</span>
                 </div>
@@ -264,7 +264,7 @@ export default function InterviewPage() {
               </div>
             </div>
           ) : (
-            <div className="glass rounded-3xl p-8 shadow-premium-lg">
+            <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-none sm:shadow-premium-lg">
               <p className="text-center text-muted-foreground">
                 질문을 불러올 수 없습니다.
               </p>
@@ -282,7 +282,7 @@ export default function InterviewPage() {
 
           {/* Upload Loading */}
           {isUploading && (
-            <div className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-premium-lg animate-glow">
+            <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-6 sm:p-8 shadow-none sm:shadow-premium-lg animate-glow">
               <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-glow">
                   <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-white" />
@@ -298,8 +298,8 @@ export default function InterviewPage() {
           )}
 
           {/* Instructions */}
-          <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-soft">
-            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+          <div className="bg-transparent sm:glass rounded-none sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-none sm:shadow-soft">
+            <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-6">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
                 <span className="text-xl sm:text-2xl">💡</span>
               </div>

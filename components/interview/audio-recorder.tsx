@@ -108,8 +108,8 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
       </AnimatePresence>
 
       {/* 녹음 UI */}
-      <Card className="rounded-xl shadow-premium">
-        <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6">
+      <Card className="rounded-none sm:rounded-xl shadow-none sm:shadow-premium border-none sm:border">
+        <CardContent className="pt-4 sm:pt-6 px-2 sm:px-6">
           <div className="space-y-4 sm:space-y-6">
             {/* Duration 표시 */}
             <div className="text-center">
@@ -244,7 +244,7 @@ export function AudioRecorder({ onRecordingComplete, disabled }: AudioRecorderPr
 
       {/* 안내 메시지 */}
       {state === 'idle' && !error && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+        <div className="bg-blue-50 border border-blue-200 rounded-none sm:rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2">
           <p className="text-xs sm:text-sm text-blue-900 leading-relaxed">
             💡 <strong>팁:</strong> 조용한 환경에서 명확하게 답변해주세요.
           </p>
