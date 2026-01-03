@@ -82,6 +82,30 @@ export default async function ResultDetailPage({
     }[]
   }
 
+  // Signed URL 생성 (1시간 유효, 보안 강화)
+  if (feedback.answers && feedback.answers.length > 0) {
+    const signedAnswers = await Promise.all(
+      feedback.answers.map(async (answer) => {
+        // Public URL에서 파일 경로 추출
+        const urlParts = answer.audioUrl.split('/interviews/')
+        if (urlParts.length < 2) return answer
+
+        const filePath = urlParts[1]
+
+        // Signed URL 생성 (1시간 유효)
+        const { data: signedData } = await supabase.storage
+          .from('interviews')
+          .createSignedUrl(filePath, 3600) // 3600초 = 1시간
+
+        return {
+          ...answer,
+          audioUrl: signedData?.signedUrl || answer.audioUrl,
+        }
+      })
+    )
+    feedback.answers = signedAnswers
+  }
+
   const date = new Date(results.created_at).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
@@ -257,17 +281,10 @@ export default async function ResultDetailPage({
                     <div className="flex-1">
                       <h4 className="font-bold text-lg mb-3">{answer.questionTitle}</h4>
                       {answer.audioUrl ? (
-                        <>
-                          <audio src={answer.audioUrl} controls className="w-full rounded-xl shadow-soft mb-3" />
-                          {/* 디버깅용 URL 표시 */}
-                          <details className="mb-3">
-                            <summary className="text-xs text-muted-foreground cursor-pointer">오디오 URL 확인</summary>
-                            <p className="text-xs text-muted-foreground break-all mt-1">{answer.audioUrl}</p>
-                          </details>
-                        </>
+                        <audio src={answer.audioUrl} controls className="w-full rounded-xl shadow-soft mb-3" />
                       ) : (
                         <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-200 mb-3">
-                          <p className="text-sm text-yellow-800">오디오 파일 URL이 없습니다.</p>
+                          <p className="text-sm text-yellow-800">오디오 파일을 찾을 수 없습니다.</p>
                         </div>
                       )}
                       {answer.transcript && (
