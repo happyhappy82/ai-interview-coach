@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle2, XCircle, Tag, AlertCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, XCircle, Tag, AlertCircle, Clock } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
