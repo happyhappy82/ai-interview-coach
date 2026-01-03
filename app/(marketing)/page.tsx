@@ -18,17 +18,18 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen gradient-mesh flex flex-col items-center justify-center p-6 md:p-12">
+    <div className="min-h-screen gradient-mesh flex flex-col items-center justify-center p-4 sm:p-6 md:p-12">
       <div className="w-full max-w-6xl mx-auto">
         {/* Hero Section */}
-        <div className="text-center space-y-8 mb-16 animate-fade-in">
-          <div className="space-y-6">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-tight">
+        <div className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 animate-fade-in">
+          <div className="space-y-4 sm:space-y-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-tight px-2">
               <span className="text-gradient">AI 면접 코치</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed px-4">
               실전과 같은 AI 면접 경험으로
-              <br />
+              <br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>
               취업 합격률을 높이세요
             </p>
           </div>

@@ -26,15 +26,15 @@ export default async function UserDashboard() {
     .limit(10)
 
   return (
-    <div className="min-h-screen gradient-mesh p-6 md:p-12">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen gradient-mesh p-4 sm:p-6 md:p-8 lg:p-12">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in">
           <div className="space-y-2">
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
               <span className="text-gradient">대시보드</span>
             </h1>
-            <p className="text-lg text-muted-foreground font-light">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-light break-all">
               안녕하세요, <span className="font-medium text-foreground">{user?.email}</span>님
             </p>
           </div>

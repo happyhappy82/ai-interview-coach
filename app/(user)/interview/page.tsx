@@ -202,19 +202,20 @@ export default function InterviewPage() {
 
   return (
     <InAppBrowserBlocker>
-      <div className="min-h-screen gradient-mesh p-6 md:p-12">
-        <div className="container mx-auto max-w-4xl space-y-8">
+      <div className="min-h-screen gradient-mesh p-4 sm:p-6 md:p-8 lg:p-12">
+        <div className="container mx-auto max-w-4xl space-y-6 sm:space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between animate-fade-in">
+          <div className="flex items-center justify-between animate-fade-in gap-2">
             <Link href="/dashboard">
-              <Button variant="outline" className="rounded-2xl px-6 py-3 shadow-soft hover:shadow-glow transition-all">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                뒤로 가기
+              <Button variant="outline" className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base">
+                <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">뒤로 가기</span>
+                <span className="sm:hidden">뒤로</span>
               </Button>
             </Link>
             {!isLoading && (
-              <div className="glass px-6 py-3 rounded-2xl shadow-soft">
-                <span className="text-sm font-semibold">
+              <div className="glass px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-2xl shadow-soft">
+                <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
                   <span className="text-gradient">{currentQuestionIndex + 1}</span>
                   <span className="text-muted-foreground"> / {questions.length}</span>
                 </span>
@@ -243,12 +244,12 @@ export default function InterviewPage() {
               <Skeleton className="h-12 w-full bg-muted/30" />
             </div>
           ) : currentQuestion ? (
-            <div className="glass rounded-3xl p-8 md:p-12 shadow-premium-lg">
-              <div className="space-y-6">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20">
-                  <span className="text-sm font-semibold text-primary">질문 {currentQuestionIndex + 1}</span>
+            <div className="glass rounded-3xl p-6 sm:p-8 md:p-10 lg:p-12 shadow-premium-lg">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20">
+                  <span className="text-xs sm:text-sm font-semibold text-primary">질문 {currentQuestionIndex + 1}</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold leading-relaxed text-gradient">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-relaxed text-gradient break-keep">
                   {currentQuestion.title}
                 </h2>
                 <div className="flex items-start space-x-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
