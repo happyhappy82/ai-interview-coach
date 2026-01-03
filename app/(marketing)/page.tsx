@@ -18,7 +18,7 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen gradient-mesh flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 lg:p-12">
+    <div className="min-h-screen flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 lg:p-12">
       <div className="w-full max-w-6xl mx-auto px-2 sm:px-4">
         {/* Hero Section */}
         <div className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 animate-fade-in">
@@ -50,8 +50,8 @@ export default async function LandingPage() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <div className="bg-white/30 p-8 hover-lift space-y-4 group">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-2xl transition-shadow">
+          <div className="glass rounded-3xl p-8 hover-lift space-y-4 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
               🎯
             </div>
             <h3 className="text-xl font-semibold">실전 같은 면접</h3>
@@ -60,8 +60,8 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-white/30 p-8 hover-lift space-y-4 group">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-2xl transition-shadow">
+          <div className="glass rounded-3xl p-8 hover-lift space-y-4 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
               📊
             </div>
             <h3 className="text-xl font-semibold">정밀한 분석</h3>
@@ -70,8 +70,8 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-white/30 p-8 hover-lift space-y-4 group">
-            <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-2xl transition-shadow">
+          <div className="glass rounded-3xl p-8 hover-lift space-y-4 group">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
               ⚡
             </div>
             <h3 className="text-xl font-semibold">즉시 개선</h3>

@@ -200,19 +200,19 @@ export default function InterviewPage() {
   const currentQuestion = questions[currentQuestionIndex]
 
   return (
-    <div className="min-h-screen gradient-mesh p-1 sm:p-4 md:p-6 lg:p-12">
+    <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
       <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-4 md:space-y-6 lg:space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between animate-fade-in gap-2">
             <Link href="/dashboard">
-              <Button variant="outline" className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 transition-all text-sm sm:text-base">
+              <Button variant="outline" className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base">
                 <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
                 <span className="hidden sm:inline">뒤로 가기</span>
                 <span className="sm:hidden">뒤로</span>
               </Button>
             </Link>
             {!isLoading && (
-              <div className="px-3 sm:px-4 md:px-6 py-2 sm:py-3">
+              <div className="glass px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-2xl shadow-soft">
                 <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
                   <span className="text-gradient">{currentQuestionIndex + 1}</span>
                   <span className="text-muted-foreground"> / {questions.length}</span>
@@ -223,10 +223,10 @@ export default function InterviewPage() {
 
           {/* Progress Bar */}
           {!isLoading && questions.length > 0 && (
-            <div className="p-1">
-              <div className="h-3 bg-muted/30 overflow-hidden">
+            <div className="glass rounded-full p-1 shadow-soft">
+              <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500 rounded-full shadow-glow"
                   style={{
                     width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
                   }}
@@ -237,12 +237,12 @@ export default function InterviewPage() {
 
           {/* Question Card */}
           {isLoading ? (
-            <div className="p-4 sm:p-8">
+            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
               <Skeleton className="h-6 w-32 mb-4 bg-muted/30" />
               <Skeleton className="h-12 w-full bg-muted/30" />
             </div>
           ) : currentQuestion ? (
-            <div className="bg-transparent p-4 sm:p-8 md:p-10 lg:p-12">
+            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 lg:p-12 shadow-soft">
               <div className="space-y-3 sm:space-y-6">
                 <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20">
                   <span className="text-xs sm:text-sm font-semibold text-primary">질문 {currentQuestionIndex + 1}</span>
@@ -262,7 +262,7 @@ export default function InterviewPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-transparent p-4 sm:p-8 ">
+            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
               <p className="text-center text-muted-foreground">
                 질문을 불러올 수 없습니다.
               </p>
@@ -280,9 +280,9 @@ export default function InterviewPage() {
 
           {/* Upload Loading */}
           {isUploading && (
-            <div className="bg-transparent p-6 sm:p-8 animate-glow">
+            <div className="glass rounded-none sm:rounded-3xl p-6 sm:p-8 shadow-soft animate-glow">
               <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-glow">
                   <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-white" />
                 </div>
                 <div className="text-center space-y-0.5 sm:space-y-1">
@@ -296,9 +296,9 @@ export default function InterviewPage() {
           )}
 
           {/* Instructions */}
-          <div className="bg-transparent p-4 sm:p-6 md:p-8 ">
+          <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-soft">
             <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-6">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
                 <span className="text-xl sm:text-2xl">💡</span>
               </div>
               <h3 className="text-base sm:text-lg md:text-xl font-bold">면접 팁</h3>
