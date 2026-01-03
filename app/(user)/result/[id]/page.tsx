@@ -74,6 +74,12 @@ export default async function ResultDetailPage({
     score?: number
     summary?: string
     raw?: string
+    answers?: {
+      questionTitle: string
+      audioUrl: string
+      transcript: string
+      duration: number
+    }[]
   }
 
   const date = new Date(results.created_at).toLocaleDateString('ko-KR', {
@@ -228,19 +234,40 @@ export default async function ResultDetailPage({
           </Card>
         )}
 
-        {/* Audio Player */}
-        {results.audio_url && (
+        {/* 질문별 답변 & 오디오 */}
+        {feedback.answers && feedback.answers.length > 0 && (
           <div className="glass rounded-3xl p-8 shadow-premium-lg">
-            <div className="flex items-center space-x-3 mb-6">
+            <div className="flex items-center space-x-3 mb-8">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-lg">
                 <span className="text-2xl">🎧</span>
               </div>
               <div>
                 <h3 className="text-2xl font-bold">내 답변 다시 듣기</h3>
-                <p className="text-sm text-muted-foreground">녹음된 답변을 다시 확인해보세요</p>
+                <p className="text-sm text-muted-foreground">각 질문별 녹음된 답변을 확인해보세요</p>
               </div>
             </div>
-            <audio src={results.audio_url} controls className="w-full rounded-2xl shadow-inner-soft" />
+
+            <div className="space-y-6">
+              {feedback.answers.map((answer, index) => (
+                <div key={index} className="p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-border/50 space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-100 to-pink-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-rose-600 text-sm font-bold">Q{index + 1}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-lg mb-3">{answer.questionTitle}</h4>
+                      <audio src={answer.audioUrl} controls className="w-full rounded-xl shadow-soft mb-3" />
+                      {answer.transcript && (
+                        <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
+                          <p className="text-xs text-muted-foreground font-semibold mb-2">녹취록</p>
+                          <p className="text-sm text-foreground/80 leading-relaxed">{answer.transcript}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

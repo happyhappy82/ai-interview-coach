@@ -180,12 +180,23 @@ ${answersText}
     // 대표 오디오 URL (첫 번째 답변)
     const representativeAudioUrl = answers[0]?.audioUrl || ''
 
+    // ai_feedback에 각 질문별 답변 정보 추가
+    const feedbackWithAnswers = {
+      ...feedback,
+      answers: answers.map(answer => ({
+        questionTitle: answer.questionTitle,
+        audioUrl: answer.audioUrl,
+        transcript: answer.transcript,
+        duration: answer.duration,
+      })),
+    }
+
     const { data: insertData, error: dbError } = await supabase
       .from('interview_results')
       .insert({
         user_id: user.id,
         audio_url: representativeAudioUrl,
-        ai_feedback: feedback,
+        ai_feedback: feedbackWithAnswers,
       })
       .select()
 
