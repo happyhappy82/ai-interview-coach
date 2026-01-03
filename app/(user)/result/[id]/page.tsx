@@ -256,7 +256,20 @@ export default async function ResultDetailPage({
                     </div>
                     <div className="flex-1">
                       <h4 className="font-bold text-lg mb-3">{answer.questionTitle}</h4>
-                      <audio src={answer.audioUrl} controls className="w-full rounded-xl shadow-soft mb-3" />
+                      {answer.audioUrl ? (
+                        <>
+                          <audio src={answer.audioUrl} controls className="w-full rounded-xl shadow-soft mb-3" />
+                          {/* 디버깅용 URL 표시 */}
+                          <details className="mb-3">
+                            <summary className="text-xs text-muted-foreground cursor-pointer">오디오 URL 확인</summary>
+                            <p className="text-xs text-muted-foreground break-all mt-1">{answer.audioUrl}</p>
+                          </details>
+                        </>
+                      ) : (
+                        <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-200 mb-3">
+                          <p className="text-sm text-yellow-800">오디오 파일 URL이 없습니다.</p>
+                        </div>
+                      )}
                       {answer.transcript && (
                         <div className="p-4 rounded-xl bg-muted/30 border border-border/30">
                           <p className="text-xs text-muted-foreground font-semibold mb-2">녹취록</p>
