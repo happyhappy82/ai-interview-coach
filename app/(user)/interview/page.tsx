@@ -25,12 +25,20 @@ interface Answer {
   duration: number
 }
 
+interface LocalAnswer {
+  questionId: string
+  questionTitle: string
+  blob: Blob
+  transcript: string
+  duration: number
+}
+
 export default function InterviewPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
-  const [answers, setAnswers] = useState<Answer[]>([]) // 모든 답변 저장
+  const [localAnswers, setLocalAnswers] = useState<LocalAnswer[]>([]) // 로컬에 저장 (Blob)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -65,134 +73,133 @@ export default function InterviewPage() {
     console.log('=== 녹음 완료 ===')
     console.log('Blob size:', blob.size)
     console.log('Duration:', duration)
-    console.log('Transcript:', transcript)
 
+    const currentQuestion = questions[currentQuestionIndex]
+
+    // 1. 로컬에 답변 저장 (업로드 X)
+    const newLocalAnswer: LocalAnswer = {
+      questionId: currentQuestion.id,
+      questionTitle: currentQuestion.title,
+      blob,
+      transcript,
+      duration,
+    }
+
+    const updatedLocalAnswers = [...localAnswers, newLocalAnswer]
+    setLocalAnswers(updatedLocalAnswers)
+
+    console.log(`답변 저장 완료 (${updatedLocalAnswers.length}/${questions.length})`)
+
+    toast({
+      title: '답변 저장',
+      description: `${updatedLocalAnswers.length}/${questions.length} 질문 완료`,
+    })
+
+    // 2. 다음 질문으로 이동 또는 일괄 업로드 & 분석
+    if (currentQuestionIndex < questions.length - 1) {
+      // 다음 질문으로
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
+    } else {
+      // 모든 질문 완료 → 일괄 업로드 & 분석
+      await uploadAndAnalyzeAll(updatedLocalAnswers)
+    }
+  }
+
+  const uploadAndAnalyzeAll = async (localAnswers: LocalAnswer[]) => {
     try {
       setIsUploading(true)
 
-      const currentQuestion = questions[currentQuestionIndex]
-      console.log('Current question:', currentQuestion)
+      toast({
+        title: '면접 완료!',
+        description: '답변을 업로드하고 AI 분석을 시작합니다...',
+      })
 
-      // 1. Storage 업로드만 수행 (AI 분석은 나중에 일괄 처리)
-      console.log('1. 파일 업로드 시작...')
+      console.log('=== 일괄 업로드 시작 ===')
 
-      // Blob의 MIME 타입에서 확장자 추출 (Safari/macOS 호환성)
+      // Blob의 MIME 타입에서 확장자 추출
       const getExtensionFromMime = (mimeType: string) => {
         if (mimeType.includes('webm')) return 'webm'
         if (mimeType.includes('mp4')) return 'mp4'
         if (mimeType.includes('aac')) return 'aac'
         if (mimeType.includes('wav')) return 'wav'
-        return 'webm' // fallback
+        return 'webm'
       }
 
-      const extension = getExtensionFromMime(blob.type)
-      console.log('Blob MIME type:', blob.type, 'Extension:', extension)
+      // 모든 답변 업로드
+      const uploadedAnswers: Answer[] = []
 
-      const formData = new FormData()
-      formData.append('file', blob, `interview_${Date.now()}.${extension}`)
-      formData.append('questionId', currentQuestion.id)
+      for (const localAnswer of localAnswers) {
+        const extension = getExtensionFromMime(localAnswer.blob.type)
+        const formData = new FormData()
+        formData.append('file', localAnswer.blob, `interview_${Date.now()}.${extension}`)
+        formData.append('questionId', localAnswer.questionId)
 
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
 
-      console.log('Upload response status:', uploadResponse.status)
-
-      if (!uploadResponse.ok) {
-        const error = await uploadResponse.json()
-        console.error('업로드 실패:', error)
-
-        if (error.retryable) {
-          toast({
-            variant: 'destructive',
-            title: '네트워크 오류',
-            description: '인터넷 연결을 확인하고 다시 시도해주세요.',
-          })
-          return
+        if (!uploadResponse.ok) {
+          throw new Error('파일 업로드 실패')
         }
 
-        throw new Error(error.error || 'Upload failed')
+        const uploadData = await uploadResponse.json()
+        const finalTranscript = uploadData.transcript || localAnswer.transcript || ''
+
+        uploadedAnswers.push({
+          questionId: localAnswer.questionId,
+          questionTitle: localAnswer.questionTitle,
+          audioUrl: uploadData.url,
+          transcript: finalTranscript,
+          duration: localAnswer.duration,
+        })
+
+        console.log(`업로드 완료: ${uploadedAnswers.length}/${localAnswers.length}`)
       }
 
-      const uploadData = await uploadResponse.json()
-      console.log('Upload success:', uploadData)
-      const audioUrl = uploadData.url
-
-      // 서버에서 Gemini로 변환한 transcript 사용 (Safari/iOS 지원)
-      const finalTranscript = uploadData.transcript || transcript || ''
-      console.log('Final transcript:', finalTranscript ? '있음' : '없음')
-
-      // 2. 답변을 로컬 배열에 저장 (AI 분석은 마지막에 일괄 처리)
-      const newAnswer: Answer = {
-        questionId: currentQuestion.id,
-        questionTitle: currentQuestion.title,
-        audioUrl,
-        transcript: finalTranscript,
-        duration,
-      }
-
-      const updatedAnswers = [...answers, newAnswer]
-      setAnswers(updatedAnswers)
-
-      console.log(`답변 저장 완료 (${updatedAnswers.length}/${questions.length})`)
+      console.log('=== 모든 업로드 완료 ===')
 
       toast({
-        title: '답변 저장 완료',
-        description: `${updatedAnswers.length}/${questions.length} 질문 완료`,
+        title: '업로드 완료!',
+        description: 'AI가 전체 답변을 분석 중입니다...',
       })
 
-      // 3. 다음 질문으로 이동 또는 전체 분석
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1)
-      } else {
-        // 모든 질문 완료 → 일괄 AI 분석
-        console.log('모든 질문 완료 - 일괄 AI 분석 시작')
+      // 일괄 AI 분석 호출
+      const batchAnalyzeResponse = await fetch('/api/batch-analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          answers: uploadedAnswers,
+        }),
+      })
 
+      if (batchAnalyzeResponse.ok) {
+        console.log('일괄 분석 성공')
         toast({
-          title: '면접 완료!',
-          description: 'AI가 전체 답변을 분석 중입니다...',
+          title: '분석 완료!',
+          description: '모든 답변 분석이 완료되었습니다.',
         })
-
-        // 일괄 AI 분석 호출
-        const batchAnalyzeResponse = await fetch('/api/batch-analyze', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            answers: updatedAnswers,
-          }),
+      } else {
+        console.error('일괄 분석 실패')
+        toast({
+          variant: 'destructive',
+          title: '분석 실패',
+          description: 'AI 분석 중 오류가 발생했습니다.',
         })
-
-        if (batchAnalyzeResponse.ok) {
-          console.log('일괄 분석 성공')
-          toast({
-            title: '분석 완료!',
-            description: '모든 답변 분석이 완료되었습니다.',
-          })
-        } else {
-          console.error('일괄 분석 실패')
-          toast({
-            variant: 'destructive',
-            title: '분석 실패',
-            description: 'AI 분석 중 오류가 발생했습니다.',
-          })
-        }
-
-        router.push('/result')
       }
+
+      router.push('/result')
     } catch (error) {
-      console.error('=== 전체 프로세스 에러 ===')
+      console.error('=== 업로드/분석 에러 ===')
       console.error('Error:', error)
-      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack')
       toast({
         variant: 'destructive',
-        title: '업로드 실패',
-        description: error instanceof Error ? error.message : '파일 업로드에 실패했습니다.',
+        title: '처리 실패',
+        description: error instanceof Error ? error.message : '답변 처리 중 오류가 발생했습니다.',
       })
     } finally {
-      console.log('=== 프로세스 완료 ===')
       setIsUploading(false)
     }
   }
@@ -286,9 +293,9 @@ export default function InterviewPage() {
                   <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-white" />
                 </div>
                 <div className="text-center space-y-0.5 sm:space-y-1">
-                  <p className="font-semibold text-base sm:text-lg">답변 처리 중</p>
+                  <p className="font-semibold text-base sm:text-lg">면접 분석 중</p>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    녹음 파일을 업로드하고 있습니다...
+                    답변을 업로드하고 AI가 분석하고 있습니다...
                   </p>
                 </div>
               </div>
