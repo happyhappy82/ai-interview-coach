@@ -62,27 +62,6 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          {/* 크롬 브라우저 안내 */}
-          <div className="max-w-md mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 sm:p-6 shadow-lg">
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-              </div>
-              <div className="flex-1 text-left">
-                <h3 className="font-bold text-blue-900 text-base sm:text-lg mb-1">
-                  앱의 기능을 100% 이용하시려면
-                </h3>
-                <p className="text-sm text-blue-800 leading-relaxed">
-                  <strong className="font-semibold">CHROME 브라우저에서 접속</strong>해주세요.
-                  <br />
-                  <span className="text-xs opacity-80">카카오톡 등 인앱 브라우저는 일부 기능이 제한됩니다.</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Auth Section */}
           <div className="pt-6 flex flex-col gap-5 items-center justify-center max-w-md mx-auto">
             <GoogleSignInButton />
