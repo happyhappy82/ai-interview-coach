@@ -176,19 +176,21 @@ export async function POST(request: Request) {
       .map((answer, index) => `질문 ${index + 1}: ${answer.questionTitle}\n답변: ${answer.transcript || '(음성 인식 실패)'}`)
       .join('\n\n')
 
+    const exampleOverall = {
+      score: 85,
+      summary: "전체 면접에 대한 종합 평가 (2-3문장)",
+      good: ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
+      bad: ["전체적으로 개선할 점 1", "개선할 점 2"],
+      keywords: ["키워드1", "키워드2", "키워드3"]
+    }
+
     const overallPrompt = `다음은 면접자의 전체 답변입니다:
 
 ${allAnswersText}
 
 위 전체 답변을 종합적으로 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요:
 
-{
-  "score": 85,
-  "summary": "전체 면접에 대한 종합 평가 (2-3문장)",
-  "good": ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
-  "bad": ["전체적으로 개선할 점 1", "개선할 점 2"],
-  "keywords": ["키워드1", "키워드2", "키워드3"]
-}
+${JSON.stringify(exampleOverall, null, 2)}
 
 중요: 백틱 없이 { 로 시작하는 순수 JSON만 출력하세요.`
 
