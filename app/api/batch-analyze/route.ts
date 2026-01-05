@@ -85,35 +85,36 @@ export async function POST(request: Request) {
       )
       .join('\n')
 
+    // questionFeedbacks 배열 예시 생성 (모든 질문 포함)
+    const questionFeedbacksExample = answers.map((answer, idx) => ({
+      questionTitle: answer.questionTitle,
+      feedback: "이 답변에 대한 상세 평가 (3-5문장으로 구체적으로 작성)",
+      strengths: ["강점 1", "강점 2"],
+      improvements: ["개선점 1", "개선점 2"],
+      score: 80
+    }))
+
     const prompt = `${promptData.content}
 
-면접자가 다음 질문들에 답변했습니다:
+면접자가 다음 ${answers.length}개 질문에 답변했습니다:
 
 ${answersText}
 
-위 답변들을 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요. 코드 블록(```)이나 설명 없이 { 로 시작해야 합니다:
+위 답변들을 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요. 코드 블록 없이 { 로 시작해야 합니다:
 
-{
-  "score": 85,
-  "summary": "전체 면접에 대한 종합 평가",
-  "questionFeedbacks": [
-    {
-      "questionTitle": "${answers[0]?.questionTitle || '질문 1'}",
-      "feedback": "이 답변에 대한 상세 평가 (3-5문장)",
-      "strengths": ["강점 1", "강점 2"],
-      "improvements": ["개선점 1", "개선점 2"],
-      "score": 80
-    }${answers.length > 1 ? ',\n    {\n      "questionTitle": "' + (answers[1]?.questionTitle || '질문 2') + '",\n      "feedback": "...",\n      "strengths": [...],\n      "improvements": [...],\n      "score": 85\n    }' : ''}${answers.length > 2 ? ' 등...' : ''}
-  ],
-  "good": ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
-  "bad": ["전체적으로 개선할 점 1", "개선할 점 2"],
-  "keywords": ["키워드1", "키워드2", "키워드3"]
-}
+${JSON.stringify({
+  score: 85,
+  summary: "전체 면접에 대한 종합 평가 (2-3문장)",
+  questionFeedbacks: questionFeedbacksExample,
+  good: ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
+  bad: ["전체적으로 개선할 점 1", "개선할 점 2"],
+  keywords: ["키워드1", "키워드2", "키워드3"]
+}, null, 2)}
 
-중요사항:
-1. questionFeedbacks는 위에 나온 ${answers.length}개 질문 모두에 대해 작성
-2. feedback은 각 답변을 구체적으로 분석 (3문장 이상)
-3. 백틱(```)이나 "json" 같은 표시 절대 금지
+필수 요구사항:
+1. questionFeedbacks 배열에 위 ${answers.length}개 질문 모두 포함할 것
+2. 각 feedback은 3-5문장으로 구체적으로 작성
+3. 백틱이나 "json" 표시 절대 금지
 4. { 로 시작하는 순수 JSON만 출력`
 
     console.log('Gemini API 호출 시작...')
