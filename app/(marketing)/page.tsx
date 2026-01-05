@@ -72,12 +72,12 @@ export default async function LandingPage() {
               </div>
               <div className="flex-1 text-left">
                 <h3 className="font-bold text-blue-900 text-base sm:text-lg mb-1">
-                  Chrome 브라우저 필수
+                  앱의 기능을 100% 이용하시려면
                 </h3>
                 <p className="text-sm text-blue-800 leading-relaxed">
-                  카카오톡, 네이버 등 인앱 브라우저에서는 로그인이 불가능합니다.
+                  <strong className="font-semibold">CHROME 브라우저에서 접속</strong>해주세요.
                   <br />
-                  <strong className="font-semibold">Chrome 브라우저에서 접속</strong>해주세요.
+                  <span className="text-xs opacity-80">카카오톡 등 인앱 브라우저는 일부 기능이 제한됩니다.</span>
                 </p>
               </div>
             </div>

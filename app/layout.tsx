@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
+import { AutoChromeRedirect } from "@/components/auto-chrome-redirect"
 
 export const metadata: Metadata = {
   title: "AI 면접 코치 - 취업 합격률을 높이는 AI 면접 연습",
@@ -37,6 +38,7 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className="antialiased min-h-screen gradient-mesh">
+        <AutoChromeRedirect />
         {children}
         <Toaster />
       </body>
