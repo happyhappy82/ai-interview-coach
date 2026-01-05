@@ -77,13 +77,11 @@ export async function POST(request: Request) {
 
     console.log('Gemini API key 확인됨')
 
-    // 1단계: 각 질문마다 개별적으로 Gemini 호출하여 피드백 생성
-    console.log('=== 1단계: 각 질문별 개별 분석 시작 ===')
-    const questionFeedbacks = []
+    // 1단계: 각 질문마다 개별적으로 Gemini 호출하여 피드백 생성 (병렬 처리)
+    console.log('=== 1단계: 각 질문별 개별 분석 시작 (병렬 처리) ===')
 
-    for (let i = 0; i < answers.length; i++) {
-      const answer = answers[i]
-      console.log(`질문 ${i + 1}/${answers.length} 분석 중...`)
+    const questionFeedbackPromises = answers.map(async (answer, i) => {
+      console.log(`질문 ${i + 1}/${answers.length} 분석 시작...`)
 
       const questionPrompt = `${promptData.content}
 
@@ -132,11 +130,11 @@ export async function POST(request: Request) {
 
             if (jsonMatch) {
               const parsed = JSON.parse(jsonMatch[0])
-              questionFeedbacks.push({
+              console.log(`질문 ${i + 1} 분석 완료`)
+              return {
                 questionTitle: answer.questionTitle,
                 ...parsed,
-              })
-              console.log(`질문 ${i + 1} 분석 완료`)
+              }
             } else {
               throw new Error('JSON 파싱 실패')
             }
@@ -147,15 +145,18 @@ export async function POST(request: Request) {
       } catch (error) {
         console.error(`질문 ${i + 1} 분석 실패:`, error)
         // 실패 시 기본 피드백 생성
-        questionFeedbacks.push({
+        return {
           questionTitle: answer.questionTitle,
           feedback: `이 질문에 대한 답변을 제출하셨습니다.`,
           strengths: ['답변 완료'],
           improvements: ['더 구체적인 답변이 필요합니다'],
           score: 70,
-        })
+        }
       }
-    }
+    })
+
+    // 모든 질문 분석을 병렬로 실행하고 결과 기다리기
+    const questionFeedbacks = await Promise.all(questionFeedbackPromises)
 
     console.log('=== 1단계 완료: 모든 질문 분석 완료 ===')
 
