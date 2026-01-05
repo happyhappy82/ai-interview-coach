@@ -58,6 +58,33 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
             clonedElement.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "맑은 고딕", sans-serif'
             clonedElement.style.fontSize = '14px'
             clonedElement.style.lineHeight = '1.6'
+
+            // 그라데이션 텍스트를 일반 텍스트로 변환 (PDF에서 보이도록)
+            const gradientTexts = clonedElement.querySelectorAll('.text-gradient')
+            gradientTexts.forEach((el: Element) => {
+              const htmlEl = el as HTMLElement
+              htmlEl.style.background = 'none'
+              htmlEl.style.backgroundClip = 'unset'
+              htmlEl.style.webkitBackgroundClip = 'unset'
+              htmlEl.style.color = '#5b21b6' // 보라색
+              htmlEl.style.opacity = '1'
+            })
+
+            // glass 효과를 흰색 배경으로 변환
+            const glassElements = clonedElement.querySelectorAll('.glass')
+            glassElements.forEach((el: Element) => {
+              const htmlEl = el as HTMLElement
+              htmlEl.style.background = 'white'
+              htmlEl.style.backdropFilter = 'none'
+              htmlEl.style.border = '1px solid #e5e7eb'
+            })
+
+            // 투명 배경을 흰색으로
+            const bgTransparent = clonedElement.querySelectorAll('[class*="bg-transparent"]')
+            bgTransparent.forEach((el: Element) => {
+              const htmlEl = el as HTMLElement
+              htmlEl.style.background = 'white'
+            })
           }
         }
       })
