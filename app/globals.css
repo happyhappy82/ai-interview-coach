@@ -138,3 +138,43 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
   }
 }
+
+/* PDF/Print 최적화 */
+@media print {
+  body {
+    background: white !important;
+    font-family: 'Malgun Gothic', '맑은 고딕', system-ui, -apple-system, sans-serif !important;
+  }
+
+  .gradient-mesh {
+    background: white !important;
+    background-image: none !important;
+  }
+
+  /* 불필요한 요소 숨기기 */
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  /* 페이지 나누기 최적화 */
+  .glass,
+  .card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* 그라데이션 텍스트를 일반 텍스트로 */
+  .text-gradient {
+    background: none !important;
+    color: #5b21b6 !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+  }
+
+  /* 투명 배경을 흰색으로 */
+  .glass {
+    background: white !important;
+    backdrop-filter: none !important;
+  }
+}
