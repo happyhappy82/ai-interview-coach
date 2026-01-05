@@ -45,24 +45,30 @@ export async function POST(request: Request) {
       )
     }
 
-    // LiveOps: analysis_rules 프롬프트 가져오기
-    console.log('프롬프트 가져오기 시작...')
-    const { data: promptData, error: promptError } = await supabase
-      .from('system_prompts')
-      .select('content')
-      .eq('key_name', 'analysis_rules')
-      .eq('is_active', true)
-      .single()
+    // 각 질문의 평가 기준 가져오기
+    console.log('질문별 평가 기준 가져오기 시작...')
+    const questionIds = answers.map(a => a.questionId)
 
-    if (promptError || !promptData) {
-      console.error('프롬프트 가져오기 실패:', promptError)
+    const { data: questionsData, error: questionsError } = await supabase
+      .from('questions')
+      .select('id, evaluation_context')
+      .in('id', questionIds)
+
+    if (questionsError) {
+      console.error('질문 정보 가져오기 실패:', questionsError)
       return NextResponse.json(
-        { error: 'Analysis rules not found' },
+        { error: 'Failed to fetch question contexts' },
         { status: 500 }
       )
     }
 
-    console.log('프롬프트 가져오기 성공')
+    // questionId를 키로 하는 맵 생성
+    const questionContextMap = new Map<string, string>()
+    questionsData?.forEach(q => {
+      questionContextMap.set(q.id, q.evaluation_context || '이 질문에 대한 답변을 STAR 기법에 따라 평가하세요.')
+    })
+
+    console.log('질문별 평가 기준 가져오기 성공')
 
     // Gemini API 호출
     const geminiApiKey = process.env.GEMINI_API_KEY
@@ -83,7 +89,10 @@ export async function POST(request: Request) {
     const questionFeedbackPromises = answers.map(async (answer, i) => {
       console.log(`질문 ${i + 1}/${answers.length} 분석 시작...`)
 
-      const questionPrompt = `${promptData.content}
+      // 이 질문의 평가 기준 가져오기
+      const evaluationContext = questionContextMap.get(answer.questionId) || '이 질문에 대한 답변을 STAR 기법에 따라 평가하세요.'
+
+      const questionPrompt = `${evaluationContext}
 
 면접 질문: ${answer.questionTitle}
 면접자의 답변: ${answer.transcript || '(음성 인식 실패)'}

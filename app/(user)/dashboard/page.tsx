@@ -67,7 +67,7 @@ export default async function UserDashboard() {
         )}
 
         {/* Main Actions */}
-        <div className="grid gap-2 sm:gap-6 md:grid-cols-2">
+        <div className="grid gap-2 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div className="glass p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-soft hover:shadow-glow hover-lift group">
             <div className="space-y-6">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
@@ -82,6 +82,25 @@ export default async function UserDashboard() {
               <Link href="/interview" className="block">
                 <Button className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all">
                   면접 시작
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="glass p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-soft hover:shadow-glow hover-lift group">
+            <div className="space-y-6">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
+                ✏️
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-bold">질문 만들기</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  나만의 맞춤형 면접 질문을 생성하세요
+                </p>
+              </div>
+              <Link href="/create-question" className="block">
+                <Button variant="outline" className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all">
+                  질문 생성
                 </Button>
               </Link>
             </div>
