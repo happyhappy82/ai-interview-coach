@@ -141,6 +141,13 @@
 
 /* PDF/Print 최적화 */
 @media print {
+  /* 브라우저 기본 색상 출력 강제 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   body {
     background: white !important;
     font-family: 'Malgun Gothic', '맑은 고딕', system-ui, -apple-system, sans-serif !important;
@@ -172,9 +179,96 @@
     background-clip: unset !important;
   }
 
-  /* 투명 배경을 흰색으로 */
+  /* Glass 효과를 흰색 배경으로 */
   .glass {
     background: white !important;
     backdrop-filter: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* 그라데이션 배경을 단색으로 변환 */
+  [class*="bg-gradient"] {
+    background-image: none !important;
+  }
+
+  /* 점수 박스 - 보라색 배경 강제 */
+  [class*="from-blue-500"][class*="to-purple-500"] {
+    background: #7c3aed !important;
+    background-image: none !important;
+  }
+
+  /* 아이콘 박스 배경색 강제 적용 */
+  [class*="from-green-500"] {
+    background: #10b981 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-orange-500"] {
+    background: #f97316 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-indigo-500"] {
+    background: #6366f1 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-rose-500"] {
+    background: #f43f5e !important;
+    background-image: none !important;
+  }
+
+  [class*="from-blue-400"][class*="to-blue-500"] {
+    background: #3b82f6 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-amber-400"] {
+    background: #fbbf24 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-purple-500"] {
+    background: #a855f7 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-pink-500"] {
+    background: #ec4899 !important;
+    background-image: none !important;
+  }
+
+  /* 흰색 텍스트 유지 */
+  [class*="text-white"] {
+    color: white !important;
+  }
+
+  /* Shadow 제거하고 border로 대체 */
+  [class*="shadow"] {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* 키워드 배지 색상 */
+  [class*="from-blue-500/10"] {
+    background: #dbeafe !important;
+    background-image: none !important;
+    border: 1px solid #3b82f6 !important;
+  }
+
+  /* 번호 박스 배경색 */
+  [class*="from-green-100"] {
+    background: #d1fae5 !important;
+    background-image: none !important;
+  }
+
+  [class*="from-orange-100"] {
+    background: #fed7aa !important;
+    background-image: none !important;
+  }
+
+  [class*="from-rose-100"] {
+    background: #ffe4e6 !important;
+    background-image: none !important;
   }
 }
