@@ -85,34 +85,36 @@ export async function POST(request: Request) {
       )
       .join('\n')
 
-    const prompt = `**중요: 반드시 순수 JSON만 출력하세요. 마크다운 코드 블록(백틱)이나 설명 없이 { 로 시작하는 JSON 객체만 반환하세요.**
-
-${promptData.content}
+    const prompt = `${promptData.content}
 
 면접자가 다음 질문들에 답변했습니다:
 
 ${answersText}
 
-위 답변들을 분석하여 아래 형식의 순수 JSON만 출력하세요:
+위 답변들을 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요. 코드 블록(```)이나 설명 없이 { 로 시작해야 합니다:
+
 {
   "score": 85,
-  "summary": "전체 면접에 대한 종합 평가 요약",
+  "summary": "전체 면접에 대한 종합 평가",
   "questionFeedbacks": [
     {
-      "questionTitle": "질문 1: 자기소개를 해주세요",
-      "feedback": "이 질문에 대한 상세한 피드백 (3-5문장). 답변의 구조, 내용의 충실도, 논리성, 구체성을 평가하세요.",
-      "strengths": ["이 답변의 강점 1", "이 답변의 강점 2"],
-      "improvements": ["이 답변의 개선할 점 1", "이 답변의 개선할 점 2"],
+      "questionTitle": "${answers[0]?.questionTitle || '질문 1'}",
+      "feedback": "이 답변에 대한 상세 평가 (3-5문장)",
+      "strengths": ["강점 1", "강점 2"],
+      "improvements": ["개선점 1", "개선점 2"],
       "score": 80
-    },
-    ...각 질문마다 반복...
+    }${answers.length > 1 ? ',\n    {\n      "questionTitle": "' + (answers[1]?.questionTitle || '질문 2') + '",\n      "feedback": "...",\n      "strengths": [...],\n      "improvements": [...],\n      "score": 85\n    }' : ''}${answers.length > 2 ? ' 등...' : ''}
   ],
-  "good": ["전체 면접에서 잘한 점 1 (총평)", "잘한 점 2 (총평)", ...],
-  "bad": ["전체 면접에서 개선할 점 1 (총평)", "개선할 점 2 (총평)", ...],
-  "keywords": ["키워드1", "키워드2", ...]
+  "good": ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
+  "bad": ["전체적으로 개선할 점 1", "개선할 점 2"],
+  "keywords": ["키워드1", "키워드2", "키워드3"]
 }
 
-**중요**: questionFeedbacks 배열의 각 요소는 위에 제시된 질문 순서대로 작성하고, feedback은 최소 3문장 이상의 상세한 분석이어야 합니다.`
+중요사항:
+1. questionFeedbacks는 위에 나온 ${answers.length}개 질문 모두에 대해 작성
+2. feedback은 각 답변을 구체적으로 분석 (3문장 이상)
+3. 백틱(```)이나 "json" 같은 표시 절대 금지
+4. { 로 시작하는 순수 JSON만 출력`
 
     console.log('Gemini API 호출 시작...')
     console.log('Prompt 길이:', prompt.length)
@@ -134,7 +136,7 @@ ${answersText}
             temperature: 0.7,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 8192,
           },
         }),
       }
@@ -172,13 +174,36 @@ ${answersText}
       if (jsonMatch) {
         feedback = JSON.parse(jsonMatch[0])
         console.log('JSON 파싱 성공:', feedback)
+
+        // questionFeedbacks가 없으면 기본 구조 생성
+        if (!feedback.questionFeedbacks || feedback.questionFeedbacks.length === 0) {
+          console.log('questionFeedbacks 없음, 기본 구조 생성')
+          feedback.questionFeedbacks = answers.map((answer, index) => ({
+            questionTitle: answer.questionTitle,
+            feedback: `질문 ${index + 1}에 대한 답변입니다. AI가 상세 피드백을 생성하지 못했습니다.`,
+            strengths: ['답변을 완료했습니다'],
+            improvements: ['더 구체적인 답변이 필요합니다'],
+            score: feedback.score || 70,
+          }))
+        }
       } else {
         throw new Error('No JSON found in response')
       }
     } catch (parseError) {
       console.error('JSON parse error:', parseError)
       console.error('원본 응답:', generatedText)
+
+      // 파싱 실패 시 기본 구조 생성
       feedback = {
+        score: 70,
+        summary: 'AI 분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+        questionFeedbacks: answers.map((answer, index) => ({
+          questionTitle: answer.questionTitle,
+          feedback: `질문 ${index + 1}에 대한 답변을 제출하셨습니다.`,
+          strengths: ['답변 완료'],
+          improvements: ['AI 분석을 다시 시도해주세요'],
+          score: 70,
+        })),
         good: ['답변을 제공해주셔서 감사합니다.'],
         bad: ['AI 분석 중 오류가 발생했습니다. 다시 시도해주세요.'],
         keywords: [],
