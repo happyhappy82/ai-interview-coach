@@ -34,7 +34,10 @@ interface LocalAnswer {
 }
 
 export default function InterviewPage() {
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]) // 모든 질문
+  const [questions, setQuestions] = useState<Question[]>([]) // 선택된 질문들
+  const [selectedQuestionIds, setSelectedQuestionIds] = useState<Set<string>>(new Set())
+  const [interviewStarted, setInterviewStarted] = useState(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
@@ -49,13 +52,13 @@ export default function InterviewPage() {
 
   const loadQuestions = async () => {
     try {
-      const response = await fetch('/api/questions?category=general')
+      const response = await fetch('/api/questions')
       if (!response.ok) {
         throw new Error('Failed to load questions')
       }
 
       const { data } = await response.json()
-      setQuestions(data)
+      setAllQuestions(data)
     } catch (error) {
       console.error('Error loading questions:', error)
       toast({
@@ -66,6 +69,41 @@ export default function InterviewPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const toggleQuestionSelection = (questionId: string) => {
+    setSelectedQuestionIds((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(questionId)) {
+        newSet.delete(questionId)
+      } else {
+        if (newSet.size >= 10) {
+          toast({
+            variant: 'destructive',
+            title: '최대 10개까지 선택 가능합니다',
+          })
+          return prev
+        }
+        newSet.add(questionId)
+      }
+      return newSet
+    })
+  }
+
+  const startInterview = () => {
+    if (selectedQuestionIds.size < 3) {
+      toast({
+        variant: 'destructive',
+        title: '최소 3개 이상 선택해주세요',
+        description: '면접을 시작하려면 최소 3개의 질문을 선택해야 합니다.',
+      })
+      return
+    }
+
+    // 선택된 질문들만 필터링
+    const selected = allQuestions.filter((q) => selectedQuestionIds.has(q.id))
+    setQuestions(selected)
+    setInterviewStarted(true)
   }
 
   const handleRecordingComplete = async (blob: Blob, duration: number, transcript: string) => {
@@ -226,6 +264,111 @@ export default function InterviewPage() {
 
   const currentQuestion = questions[currentQuestionIndex]
 
+  // 질문 선택 화면
+  if (!interviewStarted) {
+    return (
+      <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
+        <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-6 md:space-y-8">
+          {/* Header */}
+          <div className="flex items-center justify-between animate-fade-in">
+            <Link href="/dashboard">
+              <Button variant="outline" className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base">
+                <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">대시보드</span>
+                <span className="sm:hidden">뒤로</span>
+              </Button>
+            </Link>
+          </div>
+
+          {/* Title */}
+          <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-soft">
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
+                <span className="text-3xl">📋</span>
+              </div>
+              <div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+                  <span className="text-gradient">질문 선택</span>
+                </h1>
+                <p className="text-sm sm:text-base text-muted-foreground mt-2">
+                  면접에서 답변할 질문을 선택하세요 (최소 3개, 최대 10개)
+                </p>
+              </div>
+            </div>
+
+            {/* Selection Counter */}
+            <div className="mb-6">
+              <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-primary/30">
+                <span className="text-2xl font-bold text-gradient mr-2">{selectedQuestionIds.size}</span>
+                <span className="text-sm text-muted-foreground font-medium">/ 10개 선택됨</span>
+              </div>
+            </div>
+
+            {/* Questions List */}
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Skeleton key={i} className="h-16 w-full bg-muted/30" />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3 mb-6">
+                {allQuestions.map((question) => {
+                  const isSelected = selectedQuestionIds.has(question.id)
+                  return (
+                    <button
+                      key={question.id}
+                      onClick={() => toggleQuestionSelection(question.id)}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                        isSelected
+                          ? 'border-primary bg-primary/5 shadow-md'
+                          : 'border-muted hover:border-primary/50 hover:bg-muted/30'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                          isSelected
+                            ? 'border-primary bg-primary'
+                            : 'border-muted-foreground/30'
+                        }`}>
+                          {isSelected && (
+                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-sm sm:text-base">{question.title}</p>
+                          {question.category && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {question.category === 'custom' ? '커스텀 질문' : question.category}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Start Button */}
+            <Button
+              onClick={startInterview}
+              disabled={selectedQuestionIds.size < 3 || isLoading}
+              className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all"
+            >
+              {selectedQuestionIds.size < 3
+                ? `최소 ${3 - selectedQuestionIds.size}개 더 선택해주세요`
+                : '면접 시작하기'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 면접 진행 화면
   return (
     <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
       <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-4 md:space-y-6 lg:space-y-8">
