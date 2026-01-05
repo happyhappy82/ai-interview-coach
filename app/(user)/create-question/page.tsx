@@ -153,7 +153,7 @@ export default function CreateQuestionPage() {
               <p className="font-semibold mb-2">✨ AI가 자동으로 평가 기준을 생성합니다</p>
               <p className="text-xs leading-relaxed">
                 질문만 입력하시면 AI가 자동으로 해당 질문에 최적화된 평가 기준을 만들어드립니다.
-                직접 평가 기준을 작성하고 싶다면 위의 "평가 기준 직접 작성" 버튼을 클릭하세요.
+                직접 평가 기준을 작성하고 싶다면 위의 &ldquo;평가 기준 직접 작성&rdquo; 버튼을 클릭하세요.
               </p>
             </div>
 
