@@ -39,6 +39,7 @@ export default function InterviewPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
   const [localAnswers, setLocalAnswers] = useState<LocalAnswer[]>([]) // 로컬에 저장 (Blob)
+  const [remainingTime, setRemainingTime] = useState(0) // 남은 시간 (초)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -108,6 +109,21 @@ export default function InterviewPage() {
   const uploadAndAnalyzeAll = async (localAnswers: LocalAnswer[]) => {
     try {
       setIsUploading(true)
+
+      // 예상 처리 시간 계산 (업로드: 질문당 2.5초 + AI 분석: 7초)
+      const estimatedTime = Math.ceil(localAnswers.length * 2.5 + 7)
+      setRemainingTime(estimatedTime)
+
+      // 카운트다운 타이머 시작
+      const timer = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
 
       toast({
         title: '면접 완료!',
@@ -190,10 +206,14 @@ export default function InterviewPage() {
         })
       }
 
+      // 타이머 정리 및 완료 처리
+      setRemainingTime(0)
+
       router.push('/result')
     } catch (error) {
       console.error('=== 업로드/분석 에러 ===')
       console.error('Error:', error)
+      setRemainingTime(0)
       toast({
         variant: 'destructive',
         title: '처리 실패',
@@ -297,6 +317,14 @@ export default function InterviewPage() {
                   <p className="text-xs sm:text-sm text-muted-foreground">
                     답변을 업로드하고 AI가 분석하고 있습니다...
                   </p>
+                  {remainingTime > 0 && (
+                    <div className="mt-3 sm:mt-4">
+                      <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-primary/30">
+                        <span className="text-xl sm:text-2xl font-bold text-gradient mr-2">{remainingTime}</span>
+                        <span className="text-xs sm:text-sm text-muted-foreground font-medium">초 후 완료 예정</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
