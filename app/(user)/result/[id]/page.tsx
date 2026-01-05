@@ -4,8 +4,73 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle2, XCircle, Tag, AlertCircle, Clock } from 'lucide-react'
 import { redirect } from 'next/navigation'
+import { ResultActions } from '@/components/result/result-actions'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+// Open Graph 메타데이터 생성
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string }
+}): Promise<Metadata> {
+  const supabase = await createClient()
+
+  const { data: results } = await supabase
+    .from('interview_results')
+    .select('*')
+    .eq('id', params.id)
+    .single()
+
+  if (!results) {
+    return {
+      title: 'AI 면접 코치 - 분석 결과',
+    }
+  }
+
+  const feedback = results.ai_feedback as {
+    score?: number
+    summary?: string
+  }
+
+  const title = `AI 면접 분석 결과 ${feedback.score ? `- ${feedback.score}점` : ''}`
+  const description = feedback.summary || '면접 답변에 대한 AI의 정밀 분석 결과를 확인해보세요'
+
+  // 동적 OG 이미지 URL 생성
+  const ogImageParams = new URLSearchParams()
+  if (feedback.score) {
+    ogImageParams.set('score', feedback.score.toString())
+  }
+  ogImageParams.set('title', '면접 분석 결과')
+  const ogImageUrl = `/api/og?${ogImageParams.toString()}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      locale: 'ko_KR',
+      siteName: 'AI 면접 코치',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: 'AI 면접 코치 분석 결과',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
+    },
+  }
+}
 
 export default async function ResultDetailPage({
   params,
@@ -129,6 +194,8 @@ export default async function ResultDetailPage({
           </Link>
         </div>
 
+        {/* Result Content - PDF 캡처 영역 */}
+        <div id="result-content">
         {/* Title & Score */}
         <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 lg:p-12 shadow-soft">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
@@ -302,17 +369,22 @@ export default async function ResultDetailPage({
           </div>
         )}
 
-        {/* Actions */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Link href="/interview" className="block">
-            <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all">
-              다시 면접 보기
-            </Button>
-          </Link>
-          <Button variant="outline" className="rounded-2xl py-7 text-lg shadow-soft" disabled>
-            전문가 상담 신청 (준비 중)
-          </Button>
         </div>
+        {/* PDF 캡처 영역 종료 */}
+
+        {/* PDF 다운로드 & 공유 */}
+        <ResultActions
+          resultId={params.id}
+          score={feedback.score}
+          summary={feedback.summary}
+        />
+
+        {/* 다시 면접 보기 */}
+        <Link href="/interview" className="block">
+          <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all">
+            다시 면접 보기
+          </Button>
+        </Link>
 
         {/* Tips */}
         <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft border-0 sm:border sm:border-blue-200/50">
