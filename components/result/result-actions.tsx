@@ -41,16 +41,18 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
       // html2canvas로 캡처 (개선된 옵션)
       const canvas = await html2canvas(element, {
-        scale: 3, // 더 높은 해상도
+        scale: 2, // 해상도와 파일 크기 균형
         useCORS: true,
         allowTaint: true,
         logging: false,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#ffffff',
         windowWidth: element.scrollWidth,
         windowHeight: element.scrollHeight,
         scrollY: -window.scrollY,
         scrollX: -window.scrollX,
         imageTimeout: 15000,
+        y: 0,
+        height: element.scrollHeight,
         onclone: (clonedDoc) => {
           // 클론된 문서에서 스타일 강제 적용
           const clonedElement = clonedDoc.getElementById('result-content')
@@ -89,7 +91,7 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
         }
       })
 
-      const imgData = canvas.toDataURL('image/png', 1.0)
+      const imgData = canvas.toDataURL('image/png', 0.95)
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -97,22 +99,24 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
         compress: true,
       })
 
-      const imgWidth = 210 // A4 width in mm
-      const pageHeight = 297 // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
+      const pdfWidth = 210 // A4 width in mm
+      const pdfHeight = 297 // A4 height in mm
+      const imgWidth = pdfWidth
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width
+
       let heightLeft = imgHeight
       let position = 0
 
       // 첫 페이지 추가
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST')
-      heightLeft -= pageHeight
+      heightLeft -= pdfHeight
 
       // 여러 페이지가 필요한 경우
       while (heightLeft > 0) {
-        position = heightLeft - imgHeight
+        position -= pdfHeight // 음수로 이동
         pdf.addPage()
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST')
-        heightLeft -= pageHeight
+        heightLeft -= pdfHeight
       }
 
       // PDF 다운로드
