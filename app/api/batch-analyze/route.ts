@@ -77,139 +77,163 @@ export async function POST(request: Request) {
 
     console.log('Gemini API key 확인됨')
 
-    // 전체 답변을 하나의 프롬프트로 만들기
-    const answersText = answers
-      .map(
-        (answer, index) =>
-          `질문 ${index + 1}: ${answer.questionTitle}\n답변: ${answer.transcript || '(음성 인식 실패)'}\n`
-      )
-      .join('\n')
+    // 1단계: 각 질문마다 개별적으로 Gemini 호출하여 피드백 생성
+    console.log('=== 1단계: 각 질문별 개별 분석 시작 ===')
+    const questionFeedbacks = []
 
-    // questionFeedbacks 배열 예시 생성 (모든 질문 포함)
-    const questionFeedbacksExample = answers.map((answer, idx) => ({
-      questionTitle: answer.questionTitle,
-      feedback: "이 답변에 대한 상세 평가 (3-5문장으로 구체적으로 작성)",
-      strengths: ["강점 1", "강점 2"],
-      improvements: ["개선점 1", "개선점 2"],
-      score: 80
-    }))
+    for (let i = 0; i < answers.length; i++) {
+      const answer = answers[i]
+      console.log(`질문 ${i + 1}/${answers.length} 분석 중...`)
 
-    const prompt = `${promptData.content}
+      const questionPrompt = `${promptData.content}
 
-면접자가 다음 ${answers.length}개 질문에 답변했습니다:
+면접 질문: ${answer.questionTitle}
+면접자의 답변: ${answer.transcript || '(음성 인식 실패)'}
 
-${answersText}
+위 답변을 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요:
 
-위 답변들을 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요. 코드 블록 없이 { 로 시작해야 합니다:
+{
+  "feedback": "이 답변에 대한 상세 평가 (3-5문장)",
+  "strengths": ["강점 1", "강점 2"],
+  "improvements": ["개선점 1", "개선점 2"],
+  "score": 80
+}
 
-${JSON.stringify({
-  score: 85,
-  summary: "전체 면접에 대한 종합 평가 (2-3문장)",
-  questionFeedbacks: questionFeedbacksExample,
-  good: ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
-  bad: ["전체적으로 개선할 점 1", "개선할 점 2"],
-  keywords: ["키워드1", "키워드2", "키워드3"]
-}, null, 2)}
+중요: 백틱 없이 { 로 시작하는 순수 JSON만 출력하세요.`
 
-필수 요구사항:
-1. questionFeedbacks 배열에 위 ${answers.length}개 질문 모두 포함할 것
-2. 각 feedback은 3-5문장으로 구체적으로 작성
-3. 백틱이나 "json" 표시 절대 금지
-4. { 로 시작하는 순수 JSON만 출력`
-
-    console.log('Gemini API 호출 시작...')
-    console.log('Prompt 길이:', prompt.length)
-
-    const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }],
+      try {
+        const questionResponse = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 8192,
-          },
-        }),
-      }
-    )
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: questionPrompt }] }],
+              generationConfig: {
+                temperature: 0.7,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 2048,
+              },
+            }),
+          }
+        )
 
-    console.log('Gemini API response status:', geminiResponse.status)
+        if (questionResponse.ok) {
+          const questionData = await questionResponse.json()
+          const questionText = questionData.candidates?.[0]?.content?.parts?.[0]?.text
 
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text()
-      console.error('Gemini API error:', errorText)
-      return NextResponse.json(
-        { error: 'AI analysis failed', details: errorText },
-        { status: 500 }
-      )
-    }
+          if (questionText) {
+            // JSON 파싱
+            const cleanedText = questionText.replace(/```json\s*/g, '').replace(/```\s*/g, '')
+            const jsonMatch = cleanedText.match(/\{[\s\S]*\}/)
 
-    const geminiData = await geminiResponse.json()
-    const generatedText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text
-
-    if (!generatedText) {
-      return NextResponse.json(
-        { error: 'No response from AI' },
-        { status: 500 }
-      )
-    }
-
-    // JSON 파싱 시도
-    let feedback
-    try {
-      // 1. 백틱 코드 블록 제거 (```json ... ``` 형태)
-      let cleanedText = generatedText.replace(/```json\s*/g, '').replace(/```\s*/g, '')
-
-      // 2. JSON 객체 추출
-      const jsonMatch = cleanedText.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        feedback = JSON.parse(jsonMatch[0])
-        console.log('JSON 파싱 성공:', feedback)
-
-        // questionFeedbacks가 없으면 기본 구조 생성
-        if (!feedback.questionFeedbacks || feedback.questionFeedbacks.length === 0) {
-          console.log('questionFeedbacks 없음, 기본 구조 생성')
-          feedback.questionFeedbacks = answers.map((answer, index) => ({
-            questionTitle: answer.questionTitle,
-            feedback: `질문 ${index + 1}에 대한 답변입니다. AI가 상세 피드백을 생성하지 못했습니다.`,
-            strengths: ['답변을 완료했습니다'],
-            improvements: ['더 구체적인 답변이 필요합니다'],
-            score: feedback.score || 70,
-          }))
+            if (jsonMatch) {
+              const parsed = JSON.parse(jsonMatch[0])
+              questionFeedbacks.push({
+                questionTitle: answer.questionTitle,
+                ...parsed,
+              })
+              console.log(`질문 ${i + 1} 분석 완료`)
+            } else {
+              throw new Error('JSON 파싱 실패')
+            }
+          }
+        } else {
+          throw new Error('Gemini API 호출 실패')
         }
-      } else {
-        throw new Error('No JSON found in response')
-      }
-    } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('원본 응답:', generatedText)
-
-      // 파싱 실패 시 기본 구조 생성
-      feedback = {
-        score: 70,
-        summary: 'AI 분석 중 오류가 발생했습니다. 다시 시도해주세요.',
-        questionFeedbacks: answers.map((answer, index) => ({
+      } catch (error) {
+        console.error(`질문 ${i + 1} 분석 실패:`, error)
+        // 실패 시 기본 피드백 생성
+        questionFeedbacks.push({
           questionTitle: answer.questionTitle,
-          feedback: `질문 ${index + 1}에 대한 답변을 제출하셨습니다.`,
+          feedback: `이 질문에 대한 답변을 제출하셨습니다.`,
           strengths: ['답변 완료'],
-          improvements: ['AI 분석을 다시 시도해주세요'],
+          improvements: ['더 구체적인 답변이 필요합니다'],
           score: 70,
-        })),
-        good: ['답변을 제공해주셔서 감사합니다.'],
-        bad: ['AI 분석 중 오류가 발생했습니다. 다시 시도해주세요.'],
-        keywords: [],
-        raw: generatedText,
+        })
       }
+    }
+
+    console.log('=== 1단계 완료: 모든 질문 분석 완료 ===')
+
+    // 2단계: 전체 평가 (good, bad, summary, keywords 생성)
+    console.log('=== 2단계: 전체 종합 평가 시작 ===')
+
+    const allAnswersText = answers
+      .map((answer, index) => `질문 ${index + 1}: ${answer.questionTitle}\n답변: ${answer.transcript || '(음성 인식 실패)'}`)
+      .join('\n\n')
+
+    const overallPrompt = `다음은 면접자의 전체 답변입니다:
+
+${allAnswersText}
+
+위 전체 답변을 종합적으로 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요:
+
+{
+  "score": 85,
+  "summary": "전체 면접에 대한 종합 평가 (2-3문장)",
+  "good": ["전체적으로 잘한 점 1", "잘한 점 2", "잘한 점 3"],
+  "bad": ["전체적으로 개선할 점 1", "개선할 점 2"],
+  "keywords": ["키워드1", "키워드2", "키워드3"]
+}
+
+중요: 백틱 없이 { 로 시작하는 순수 JSON만 출력하세요.`
+
+    let overallFeedback = {
+      score: 70,
+      summary: '면접을 완료하셨습니다.',
+      good: ['답변을 제공해주셔서 감사합니다.'],
+      bad: ['더 구체적인 답변이 필요합니다.'],
+      keywords: [],
+    }
+
+    try {
+      const overallResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: overallPrompt }] }],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 2048,
+            },
+          }),
+        }
+      )
+
+      if (overallResponse.ok) {
+        const overallData = await overallResponse.json()
+        const overallText = overallData.candidates?.[0]?.content?.parts?.[0]?.text
+
+        if (overallText) {
+          const cleanedText = overallText.replace(/```json\s*/g, '').replace(/```\s*/g, '')
+          const jsonMatch = cleanedText.match(/\{[\s\S]*\}/)
+
+          if (jsonMatch) {
+            overallFeedback = JSON.parse(jsonMatch[0])
+            console.log('전체 평가 생성 완료')
+          }
+        }
+      }
+    } catch (error) {
+      console.error('전체 평가 생성 실패:', error)
+    }
+
+    console.log('=== 2단계 완료: 전체 종합 평가 완료 ===')
+
+    // 최종 feedback 객체 구성
+    const feedback = {
+      ...overallFeedback,
+      questionFeedbacks,
     }
 
     // DB에 결과 저장
