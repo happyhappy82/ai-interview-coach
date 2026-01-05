@@ -4,6 +4,34 @@ import { EmailSignInForm } from '@/components/auth/email-sign-in-form'
 import { GoogleSignInButton } from '@/components/auth/google-sign-in-button'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'AI 면접 코치 - 실전 같은 AI 면접 연습',
+  description: '실전과 같은 AI 면접 경험으로 취업 합격률을 높이세요. AI가 실제 면접관처럼 질문하고 정밀한 피드백을 제공합니다.',
+  keywords: ['AI 면접', '면접 연습', '취업 준비', '면접 코칭', '모의 면접', 'AI 코치'],
+  openGraph: {
+    title: 'AI 면접 코치',
+    description: '실전과 같은 AI 면접 경험으로 취업 합격률을 높이세요',
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: 'AI 면접 코치',
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'AI 면접 코치',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI 면접 코치',
+    description: '실전과 같은 AI 면접 경험으로 취업 합격률을 높이세요',
+    images: ['/api/og'],
+  },
+}
 
 export default async function LandingPage() {
   const supabase = await createClient()
@@ -32,6 +60,27 @@ export default async function LandingPage() {
               <span className="sm:hidden"> </span>
               취업 합격률을 높이세요
             </p>
+          </div>
+
+          {/* 크롬 브라우저 안내 */}
+          <div className="max-w-md mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-4 sm:p-6 shadow-lg">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
+              <div className="flex-1 text-left">
+                <h3 className="font-bold text-blue-900 text-base sm:text-lg mb-1">
+                  Chrome 브라우저 필수
+                </h3>
+                <p className="text-sm text-blue-800 leading-relaxed">
+                  카카오톡, 네이버 등 인앱 브라우저에서는 로그인이 불가능합니다.
+                  <br />
+                  <strong className="font-semibold">Chrome 브라우저에서 접속</strong>해주세요.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Auth Section */}

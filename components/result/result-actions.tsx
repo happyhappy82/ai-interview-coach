@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Download, Share2, Printer } from 'lucide-react'
+import { Share2, Printer, Download } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -15,7 +15,6 @@ interface ResultActionsProps {
 export function ResultActions({ resultId, score, summary }: ResultActionsProps) {
   const { toast } = useToast()
 
-  // 브라우저 기본 인쇄 기능 사용 (권장)
   const handlePrint = () => {
     window.print()
   }
@@ -27,21 +26,16 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
         description: '잠시만 기다려주세요.',
       })
 
-      // 결과 페이지 전체를 캡처
       const element = document.getElementById('result-content')
       if (!element) {
         throw new Error('결과 페이지를 찾을 수 없습니다.')
       }
 
-      // 스크롤을 맨 위로 이동
       window.scrollTo(0, 0)
-
-      // DOM이 완전히 렌더링될 때까지 대기
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      // html2canvas로 캡처 (개선된 옵션)
       const canvas = await html2canvas(element, {
-        scale: 2, // 해상도와 파일 크기 균형
+        scale: 2,
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -51,41 +45,28 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
         scrollY: -window.scrollY,
         scrollX: -window.scrollX,
         imageTimeout: 15000,
-        y: 0,
-        height: element.scrollHeight,
         onclone: (clonedDoc) => {
-          // 클론된 문서에서 스타일 강제 적용
           const clonedElement = clonedDoc.getElementById('result-content')
           if (clonedElement) {
-            clonedElement.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "맑은 고딕", sans-serif'
-            clonedElement.style.fontSize = '14px'
-            clonedElement.style.lineHeight = '1.6'
+            clonedElement.style.fontFamily = 'system-ui, -apple-system, sans-serif'
 
-            // 그라데이션 텍스트를 일반 텍스트로 변환 (PDF에서 보이도록)
+            // 그라데이션 텍스트를 일반 텍스트로
             const gradientTexts = clonedElement.querySelectorAll('.text-gradient')
             gradientTexts.forEach((el: Element) => {
               const htmlEl = el as HTMLElement
               htmlEl.style.background = 'none'
-              htmlEl.style.backgroundClip = 'unset'
+              htmlEl.style.color = '#5b21b6'
               htmlEl.style.webkitBackgroundClip = 'unset'
-              htmlEl.style.color = '#5b21b6' // 보라색
-              htmlEl.style.opacity = '1'
+              htmlEl.style.backgroundClip = 'unset'
             })
 
-            // glass 효과를 흰색 배경으로 변환
+            // glass 효과를 흰색 배경으로
             const glassElements = clonedElement.querySelectorAll('.glass')
             glassElements.forEach((el: Element) => {
               const htmlEl = el as HTMLElement
               htmlEl.style.background = 'white'
               htmlEl.style.backdropFilter = 'none'
               htmlEl.style.border = '1px solid #e5e7eb'
-            })
-
-            // 투명 배경을 흰색으로
-            const bgTransparent = clonedElement.querySelectorAll('[class*="bg-transparent"]')
-            bgTransparent.forEach((el: Element) => {
-              const htmlEl = el as HTMLElement
-              htmlEl.style.background = 'white'
             })
           }
         }
@@ -99,27 +80,24 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
         compress: true,
       })
 
-      const pdfWidth = 210 // A4 width in mm
-      const pdfHeight = 297 // A4 height in mm
+      const pdfWidth = 210
+      const pdfHeight = 297
       const imgWidth = pdfWidth
       const imgHeight = (canvas.height * pdfWidth) / canvas.width
 
       let heightLeft = imgHeight
       let position = 0
 
-      // 첫 페이지 추가
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST')
       heightLeft -= pdfHeight
 
-      // 여러 페이지가 필요한 경우
       while (heightLeft > 0) {
-        position -= pdfHeight // 음수로 이동
+        position -= pdfHeight
         pdf.addPage()
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST')
         heightLeft -= pdfHeight
       }
 
-      // PDF 다운로드
       const fileName = `면접결과_${new Date().toLocaleDateString('ko-KR').replace(/\./g, '-').replace(/ /g, '')}.pdf`
       pdf.save(fileName)
 
@@ -181,24 +159,24 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
   return (
     <div className="space-y-4">
-      {/* 인쇄/PDF 저장 (권장) */}
+      {/* PDF 다운로드 (모바일 우선) */}
       <Button
-        onClick={handlePrint}
+        onClick={handleDownloadPDF}
         className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all"
       >
-        <Printer className="mr-2 h-5 w-5" />
-        인쇄 / PDF 저장
+        <Download className="mr-2 h-5 w-5" />
+        PDF 다운로드
       </Button>
 
       {/* 공유 및 고급 옵션 */}
       <div className="grid sm:grid-cols-2 gap-4">
         <Button
-          onClick={handleDownloadPDF}
+          onClick={handlePrint}
           variant="outline"
           className="rounded-2xl py-6 text-base shadow-soft hover:shadow-glow transition-all"
         >
-          <Download className="mr-2 h-4 w-4" />
-          PDF 직접 저장
+          <Printer className="mr-2 h-4 w-4" />
+          인쇄하기
         </Button>
         <Button
           onClick={handleShare}
@@ -212,7 +190,7 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
       {/* 안내 메시지 */}
       <div className="bg-blue-50/50 border border-blue-200/50 rounded-xl p-3 text-sm text-blue-800">
-        💡 <strong>팁:</strong> &ldquo;인쇄 / PDF 저장&rdquo; 버튼을 클릭한 후, 인쇄 대화상자에서 &ldquo;PDF로 저장&rdquo;을 선택하면 가장 깔끔한 PDF를 얻을 수 있습니다.
+        💡 <strong>팁:</strong> 모바일에서는 &ldquo;PDF 다운로드&rdquo;를, PC에서는 &ldquo;인쇄하기&rdquo;를 사용하면 더 깔끔한 결과를 얻을 수 있습니다.
       </div>
     </div>
   )
