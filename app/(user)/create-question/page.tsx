@@ -7,15 +7,14 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Sparkles } from 'lucide-react'
+import { ArrowLeft, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function CreateQuestionPage() {
   const [title, setTitle] = useState('')
-  const [evaluationContext, setEvaluationContext] = useState(
-    '이 질문에 대한 답변을 STAR 기법(Situation, Task, Action, Result)에 따라 평가하세요. 구체성, 논리성, 진정성을 중점적으로 분석해주세요.'
-  )
+  const [evaluationContext, setEvaluationContext] = useState('')
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
@@ -118,33 +117,44 @@ export default function CreateQuestionPage() {
               </p>
             </div>
 
-            {/* 평가 기준 입력 */}
+            {/* 평가 기준 입력 (선택사항 - 접기/펼치기) */}
             <div className="space-y-3">
-              <Label htmlFor="evaluationContext" className="text-base font-semibold">
-                평가 기준 및 맥락
-              </Label>
-              <Textarea
-                id="evaluationContext"
-                value={evaluationContext}
-                onChange={(e) => setEvaluationContext(e.target.value)}
-                placeholder="AI가 이 질문을 어떻게 평가해야 하는지 설명해주세요"
-                className="rounded-xl min-h-[200px] text-base"
-                maxLength={1000}
-              />
-              <p className="text-xs text-muted-foreground">
-                AI가 답변을 분석할 때 어떤 기준으로 평가해야 하는지 설명해주세요 ({evaluationContext.length}/1000)
-              </p>
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                <span>평가 기준 직접 작성 (선택사항)</span>
+              </button>
+
+              {showAdvanced && (
+                <div className="space-y-3 animate-in slide-in-from-top-2">
+                  <Label htmlFor="evaluationContext" className="text-sm font-medium text-muted-foreground">
+                    평가 기준 및 맥락
+                  </Label>
+                  <Textarea
+                    id="evaluationContext"
+                    value={evaluationContext}
+                    onChange={(e) => setEvaluationContext(e.target.value)}
+                    placeholder="비워두면 AI가 질문에 맞는 평가 기준을 자동으로 생성합니다"
+                    className="rounded-xl min-h-[200px] text-base"
+                    maxLength={1000}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    AI가 답변을 분석할 때 어떤 기준으로 평가해야 하는지 설명해주세요 ({evaluationContext.length}/1000)
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* 안내 메시지 */}
             <div className="bg-blue-50/50 border border-blue-200/50 rounded-xl p-4 text-sm text-blue-800">
-              <p className="font-semibold mb-2">💡 평가 기준 작성 팁:</p>
-              <ul className="space-y-1 ml-4 list-disc">
-                <li>STAR 기법 활용 여부 (Situation, Task, Action, Result)</li>
-                <li>구체적인 수치나 사례 포함 여부</li>
-                <li>논리적 전개와 일관성</li>
-                <li>직무와의 연관성</li>
-              </ul>
+              <p className="font-semibold mb-2">✨ AI가 자동으로 평가 기준을 생성합니다</p>
+              <p className="text-xs leading-relaxed">
+                질문만 입력하시면 AI가 자동으로 해당 질문에 최적화된 평가 기준을 만들어드립니다.
+                직접 평가 기준을 작성하고 싶다면 위의 "평가 기준 직접 작성" 버튼을 클릭하세요.
+              </p>
             </div>
 
             {/* Submit Button */}
