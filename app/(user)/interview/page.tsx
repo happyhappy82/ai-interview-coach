@@ -114,12 +114,12 @@ export default function InterviewPage() {
       const estimatedTime = Math.ceil(localAnswers.length * 2.5 + 7)
       setRemainingTime(estimatedTime)
 
-      // 카운트다운 타이머 시작
+      // 카운트다운 타이머 시작 (적응형 - 시간이 부족하면 자동 연장)
       const timer = setInterval(() => {
         setRemainingTime((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer)
-            return 0
+          // 5초 이하로 떨어지면 10초 추가 (처리가 더 오래 걸리는 경우)
+          if (prev <= 5) {
+            return prev + 10
           }
           return prev - 1
         })

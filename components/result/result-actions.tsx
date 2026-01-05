@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Share2, Printer, Download } from 'lucide-react'
+import { Share2, Printer } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
@@ -159,38 +159,28 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
   return (
     <div className="space-y-4">
-      {/* PDF 다운로드 (모바일 우선) */}
-      <Button
-        onClick={handleDownloadPDF}
-        className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all"
-      >
-        <Download className="mr-2 h-5 w-5" />
-        PDF 다운로드
-      </Button>
-
-      {/* 공유 및 고급 옵션 */}
+      {/* 인쇄/PDF 다운로드 및 공유하기 */}
       <div className="grid sm:grid-cols-2 gap-4">
         <Button
-          onClick={handlePrint}
-          variant="outline"
-          className="rounded-2xl py-6 text-base shadow-soft hover:shadow-glow transition-all"
+          onClick={handleDownloadPDF}
+          className="rounded-2xl py-7 text-base sm:text-lg shadow-soft hover:shadow-glow transition-all"
         >
-          <Printer className="mr-2 h-4 w-4" />
-          인쇄하기
+          <Printer className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+          인쇄 / PDF 다운로드
         </Button>
         <Button
           onClick={handleShare}
           variant="outline"
-          className="rounded-2xl py-6 text-base shadow-soft hover:shadow-glow transition-all"
+          className="rounded-2xl py-7 text-base sm:text-lg shadow-soft hover:shadow-glow transition-all"
         >
-          <Share2 className="mr-2 h-4 w-4" />
+          <Share2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           공유하기
         </Button>
       </div>
 
       {/* 안내 메시지 */}
       <div className="bg-blue-50/50 border border-blue-200/50 rounded-xl p-3 text-sm text-blue-800">
-        💡 <strong>팁:</strong> 모바일에서는 &ldquo;PDF 다운로드&rdquo;를, PC에서는 &ldquo;인쇄하기&rdquo;를 사용하면 더 깔끔한 결과를 얻을 수 있습니다.
+        💡 <strong>팁:</strong> PDF 다운로드 후 파일을 열어서 인쇄하실 수 있습니다.
       </div>
     </div>
   )
