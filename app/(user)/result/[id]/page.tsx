@@ -139,6 +139,13 @@ export default async function ResultDetailPage({
     score?: number
     summary?: string
     raw?: string
+    questionFeedbacks?: {
+      questionTitle: string
+      feedback: string
+      strengths?: string[]
+      improvements?: string[]
+      score?: number
+    }[]
     answers?: {
       questionTitle: string
       audioUrl: string
@@ -227,7 +234,86 @@ export default async function ResultDetailPage({
           )}
         </div>
 
-        {/* Good Points */}
+        {/* 문항별 피드백 */}
+        {feedback.questionFeedbacks && feedback.questionFeedbacks.length > 0 && (
+          <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
+            <div className="flex items-center space-x-3 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+                <span className="text-2xl">📝</span>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold">문항별 상세 피드백</h3>
+                <p className="text-sm text-muted-foreground">각 질문에 대한 AI의 상세한 분석입니다</p>
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              {feedback.questionFeedbacks.map((qf, index) => (
+                <div key={index} className="p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-border/50 space-y-4">
+                  {/* 질문 제목 */}
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-purple-600 text-sm font-bold">Q{index + 1}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-lg mb-2">{qf.questionTitle}</h4>
+                      {qf.score !== undefined && (
+                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-semibold mb-3">
+                          {qf.score}점
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 상세 피드백 */}
+                  <div className="pl-11">
+                    <div className="p-4 rounded-xl bg-muted/30 border border-border/30 mb-4">
+                      <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">{qf.feedback}</p>
+                    </div>
+
+                    {/* 강점 */}
+                    {qf.strengths && qf.strengths.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold text-green-600 mb-2 flex items-center">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          잘한 점
+                        </p>
+                        <ul className="space-y-1.5">
+                          {qf.strengths.map((strength, idx) => (
+                            <li key={idx} className="flex items-start space-x-2">
+                              <span className="text-green-500 text-xs mt-0.5">•</span>
+                              <span className="text-xs text-foreground/80">{strength}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* 개선점 */}
+                    {qf.improvements && qf.improvements.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold text-orange-600 mb-2 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          개선할 점
+                        </p>
+                        <ul className="space-y-1.5">
+                          {qf.improvements.map((improvement, idx) => (
+                            <li key={idx} className="flex items-start space-x-2">
+                              <span className="text-orange-500 text-xs mt-0.5">•</span>
+                              <span className="text-xs text-foreground/80">{improvement}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Good Points - 총평 */}
         {feedback.good && feedback.good.length > 0 && (
           <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
             <div className="flex items-center space-x-3 mb-6">
@@ -235,8 +321,8 @@ export default async function ResultDetailPage({
                 <CheckCircle2 className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold">잘한 점</h3>
-                <p className="text-sm text-muted-foreground">강점으로 부각된 부분입니다</p>
+                <h3 className="text-2xl font-bold">잘한 점 (총평)</h3>
+                <p className="text-sm text-muted-foreground">전체 면접에서 강점으로 부각된 부분입니다</p>
               </div>
             </div>
             <ul className="space-y-4">
@@ -254,7 +340,7 @@ export default async function ResultDetailPage({
           </div>
         )}
 
-        {/* Improvement Points */}
+        {/* Improvement Points - 총평 */}
         {feedback.bad && feedback.bad.length > 0 && (
           <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
             <div className="flex items-center space-x-3 mb-6">
@@ -262,8 +348,8 @@ export default async function ResultDetailPage({
                 <XCircle className="h-6 w-6" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold">개선할 점</h3>
-                <p className="text-sm text-muted-foreground">보완하면 더 좋을 부분입니다</p>
+                <h3 className="text-2xl font-bold">개선할 점 (총평)</h3>
+                <p className="text-sm text-muted-foreground">전체 면접에서 보완하면 더 좋을 부분입니다</p>
               </div>
             </div>
             <ul className="space-y-4">
