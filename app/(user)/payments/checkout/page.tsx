@@ -20,8 +20,8 @@ import Link from 'next/link'
 export default function CheckoutPage() {
   const searchParams = useSearchParams()
 
-  const amount = Number(searchParams.get('amount')) || 30000
-  const productName = '전문가 1:1 피드백 (30분)'
+  const amount = Number(searchParams.get('amount')) || 100
+  const productName = '결제 테스트'
 
   const [isLoading, setIsLoading] = useState(false)
 

@@ -204,9 +204,9 @@ export default async function ExpertPage() {
             </div>
           </div>
 
-          <Link href="/payments/checkout?amount=30000">
+          <Link href="/payments/checkout?amount=100">
             <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
-              30,000원 / 30분 피드백 받기
+              100원 / 테스트 결제
             </Button>
           </Link>
         </div>
