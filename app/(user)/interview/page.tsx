@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Upload, Loader2, Plus, X } from 'lucide-react'
+import { ArrowLeft, Upload, Loader2, Plus, X, GripVertical } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
@@ -47,6 +47,7 @@ export default function InterviewPage() {
   const [showInlineForm, setShowInlineForm] = useState(false) // 인라인 질문 추가 폼 표시
   const [newQuestionTitle, setNewQuestionTitle] = useState('') // 새 질문 제목
   const [isCreatingQuestion, setIsCreatingQuestion] = useState(false) // 질문 생성 중
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null) // 드래그 중인 질문 인덱스
   const { toast } = useToast()
   const router = useRouter()
 
@@ -156,6 +157,34 @@ export default function InterviewPage() {
     }
   }
 
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index)
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null)
+      return
+    }
+
+    const newQuestions = [...allQuestions]
+    const draggedQuestion = newQuestions[draggedIndex]
+
+    // 드래그한 항목 제거
+    newQuestions.splice(draggedIndex, 1)
+    // 새 위치에 삽입
+    newQuestions.splice(dropIndex, 0, draggedQuestion)
+
+    setAllQuestions(newQuestions)
+    setDraggedIndex(null)
+  }
+
   const startInterview = () => {
     if (selectedQuestionIds.size < 3) {
       toast({
@@ -166,7 +195,7 @@ export default function InterviewPage() {
       return
     }
 
-    // 선택된 질문들만 필터링
+    // 선택된 질문들만 필터링 (현재 순서 유지)
     const selected = allQuestions.filter((q) => selectedQuestionIds.has(q.id))
     setQuestions(selected)
     setInterviewStarted(true)
@@ -443,40 +472,52 @@ export default function InterviewPage() {
               </div>
             ) : (
               <div className="space-y-3 mb-6">
-                {allQuestions.map((question) => {
+                {allQuestions.map((question, index) => {
                   const isSelected = selectedQuestionIds.has(question.id)
+                  const isDragging = draggedIndex === index
                   return (
-                    <button
+                    <div
                       key={question.id}
-                      onClick={() => toggleQuestionSelection(question.id)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                        isSelected
+                      draggable
+                      onDragStart={() => handleDragStart(index)}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDrop={(e) => handleDrop(e, index)}
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move ${
+                        isDragging
+                          ? 'opacity-50 scale-95'
+                          : isSelected
                           ? 'border-primary bg-primary/5 shadow-md'
                           : 'border-muted hover:border-primary/50 hover:bg-muted/30'
                       }`}
                     >
                       <div className="flex items-start space-x-3">
-                        <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                          isSelected
-                            ? 'border-primary bg-primary'
-                            : 'border-muted-foreground/30'
-                        }`}>
-                          {isSelected && (
-                            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium text-sm sm:text-base">{question.title}</p>
-                          {question.category && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {question.category === 'custom' ? '커스텀 질문' : question.category}
-                            </p>
-                          )}
-                        </div>
+                        <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing" />
+                        <button
+                          onClick={() => toggleQuestionSelection(question.id)}
+                          className="flex items-start space-x-3 flex-1 text-left"
+                        >
+                          <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                            isSelected
+                              ? 'border-primary bg-primary'
+                              : 'border-muted-foreground/30'
+                          }`}>
+                            {isSelected && (
+                              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-sm sm:text-base">{question.title}</p>
+                            {question.category && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {question.category === 'custom' ? '커스텀 질문' : question.category}
+                              </p>
+                            )}
+                          </div>
+                        </button>
                       </div>
-                    </button>
+                    </div>
                   )
                 })}
               </div>
