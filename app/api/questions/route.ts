@@ -19,12 +19,25 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 기본 질문 (is_custom = false) + 사용자의 커스텀 질문 (is_custom = true, user_id = current user)
+    // 1. 사용자가 숨긴 질문 ID 목록 조회
+    const { data: hiddenQuestions } = await supabase
+      .from('hidden_questions')
+      .select('question_id')
+      .eq('user_id', user.id)
+
+    const hiddenIds = hiddenQuestions?.map(h => h.question_id) || []
+
+    // 2. 기본 질문 (is_custom = false) + 사용자의 커스텀 질문 (is_custom = true, user_id = current user)
     let query = supabase
       .from('questions')
       .select('*')
       .or(`and(is_custom.eq.false${category ? `,category.eq.${category}` : ''}),and(is_custom.eq.true,user_id.eq.${user.id})`)
       .order('order', { ascending: true })
+
+    // 3. 숨긴 질문 제외
+    if (hiddenIds.length > 0) {
+      query = query.not('id', 'in', `(${hiddenIds.join(',')})`)
+    }
 
     const { data, error } = await query
 

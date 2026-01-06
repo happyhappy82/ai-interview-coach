@@ -10,6 +10,7 @@ import { ArrowLeft, Upload, Loader2, Plus, X, GripVertical } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
+import { DeleteQuestionDialog } from '@/components/interview/delete-question-dialog'
 
 interface Question {
   id: string
@@ -49,6 +50,13 @@ export default function InterviewPage() {
   const [isCreatingQuestion, setIsCreatingQuestion] = useState(false) // 질문 생성 중
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null) // 드래그 중인 질문 인덱스
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0) // 현재 표시 중인 메시지 인덱스
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false) // 삭제 확인 모달 표시
+  const [questionToDelete, setQuestionToDelete] = useState<{
+    id: string
+    title: string
+    isCustom: boolean
+  } | null>(null) // 삭제할 질문
+  const [isDeleting, setIsDeleting] = useState(false) // 삭제 중
   const { toast } = useToast()
   const router = useRouter()
 
@@ -200,6 +208,57 @@ export default function InterviewPage() {
 
     setAllQuestions(newQuestions)
     setDraggedIndex(null)
+  }
+
+  const handleDeleteClick = (id: string, title: string, isCustom: boolean) => {
+    setQuestionToDelete({ id, title, isCustom })
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!questionToDelete) return
+
+    setIsDeleting(true)
+
+    try {
+      const response = await fetch(`/api/questions/${questionToDelete.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete question')
+      }
+
+      const { deletionType } = await response.json()
+
+      // 로컬 상태에서 제거
+      setAllQuestions(prev => prev.filter(q => q.id !== questionToDelete.id))
+      setSelectedQuestionIds(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(questionToDelete.id)
+        return newSet
+      })
+
+      toast({
+        title: deletionType === 'hard' ? '질문 삭제 완료' : '질문 숨기기 완료',
+        description: deletionType === 'hard'
+          ? '커스텀 질문이 삭제되었습니다.'
+          : '질문이 목록에서 숨겨졌습니다.',
+      })
+
+      setDeleteDialogOpen(false)
+      setQuestionToDelete(null)
+    } catch (error) {
+      console.error('Delete error:', error)
+      toast({
+        variant: 'destructive',
+        title: '삭제 실패',
+        description: error instanceof Error ? error.message : '질문 삭제 중 오류가 발생했습니다.',
+      })
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const startInterview = () => {
@@ -497,7 +556,7 @@ export default function InterviewPage() {
                       onDragStart={() => handleDragStart(index)}
                       onDragOver={(e) => handleDragOver(e, index)}
                       onDrop={(e) => handleDrop(e, index)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move ${
+                      className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move group relative ${
                         isDragging
                           ? 'opacity-50 scale-95'
                           : isSelected
@@ -538,6 +597,18 @@ export default function InterviewPage() {
                             )}
                           </div>
                         </button>
+
+                        {/* 삭제 버튼 */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeleteClick(question.id, question.title, question.category === 'custom')
+                          }}
+                          className="absolute top-3 right-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                          aria-label={`${question.title} 삭제`}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
                   )
@@ -556,6 +627,16 @@ export default function InterviewPage() {
                 : '면접 시작하기'}
             </Button>
           </div>
+
+          {/* 삭제 확인 모달 */}
+          <DeleteQuestionDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            onConfirm={handleDeleteConfirm}
+            questionTitle={questionToDelete?.title || ''}
+            isCustomQuestion={questionToDelete?.isCustom || false}
+            isDeleting={isDeleting}
+          />
         </div>
       </div>
     )
