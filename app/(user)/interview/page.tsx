@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Upload, Loader2 } from 'lucide-react'
+import { ArrowLeft, Upload, Loader2, Plus, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Input } from '@/components/ui/input'
 
 interface Question {
   id: string
@@ -43,6 +44,9 @@ export default function InterviewPage() {
   const [isUploading, setIsUploading] = useState(false)
   const [localAnswers, setLocalAnswers] = useState<LocalAnswer[]>([]) // 로컬에 저장 (Blob)
   const [remainingTime, setRemainingTime] = useState(0) // 남은 시간 (초)
+  const [showInlineForm, setShowInlineForm] = useState(false) // 인라인 질문 추가 폼 표시
+  const [newQuestionTitle, setNewQuestionTitle] = useState('') // 새 질문 제목
+  const [isCreatingQuestion, setIsCreatingQuestion] = useState(false) // 질문 생성 중
   const { toast } = useToast()
   const router = useRouter()
 
@@ -88,6 +92,68 @@ export default function InterviewPage() {
       }
       return newSet
     })
+  }
+
+  const handleCreateInlineQuestion = async () => {
+    if (!newQuestionTitle.trim()) {
+      toast({
+        variant: 'destructive',
+        title: '질문을 입력하세요',
+        description: '면접 질문을 입력해주세요.',
+      })
+      return
+    }
+
+    setIsCreatingQuestion(true)
+
+    try {
+      const response = await fetch('/api/questions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: newQuestionTitle.trim(),
+          evaluationContext: '', // AI가 자동 생성
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('질문 생성 실패')
+      }
+
+      const { data: newQuestion } = await response.json()
+
+      // 새 질문을 리스트에 추가
+      setAllQuestions((prev) => [...prev, newQuestion])
+
+      // 자동으로 선택
+      setSelectedQuestionIds((prev) => {
+        const newSet = new Set(prev)
+        if (newSet.size < 10) {
+          newSet.add(newQuestion.id)
+        }
+        return newSet
+      })
+
+      toast({
+        title: '질문 추가 완료!',
+        description: '새로운 질문이 추가되고 자동으로 선택되었습니다.',
+      })
+
+      // 폼 초기화
+      setNewQuestionTitle('')
+      setShowInlineForm(false)
+    } catch (error) {
+      console.error('질문 생성 에러:', error)
+      toast({
+        variant: 'destructive',
+        title: '질문 생성 실패',
+        description: '다시 시도해주세요.',
+      })
+    } finally {
+      setIsCreatingQuestion(false)
+    }
   }
 
   const startInterview = () => {
@@ -303,6 +369,70 @@ export default function InterviewPage() {
                 <span className="text-sm text-muted-foreground font-medium">/ 10개 선택됨</span>
               </div>
             </div>
+
+            {/* Add Question Button */}
+            {!isLoading && !showInlineForm && (
+              <button
+                onClick={() => setShowInlineForm(true)}
+                className="w-full mb-4 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all group"
+              >
+                <div className="flex items-center justify-center space-x-2 text-primary">
+                  <Plus className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold">나만의 질문 추가하기</span>
+                </div>
+              </button>
+            )}
+
+            {/* Inline Question Creation Form */}
+            {showInlineForm && (
+              <div className="mb-4 p-4 rounded-xl border-2 border-primary bg-primary/5 space-y-3 animate-in slide-in-from-top-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-sm">새 질문 추가</h3>
+                  <button
+                    onClick={() => {
+                      setShowInlineForm(false)
+                      setNewQuestionTitle('')
+                    }}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <Input
+                  value={newQuestionTitle}
+                  onChange={(e) => setNewQuestionTitle(e.target.value)}
+                  placeholder="예: 프로젝트에서 가장 어려웠던 문제는 무엇인가요?"
+                  maxLength={200}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !isCreatingQuestion) {
+                      handleCreateInlineQuestion()
+                    }
+                  }}
+                  className="rounded-xl"
+                  autoFocus
+                />
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    {newQuestionTitle.length}/200 • AI가 평가 기준을 자동 생성합니다
+                  </p>
+                  <Button
+                    onClick={handleCreateInlineQuestion}
+                    disabled={isCreatingQuestion || !newQuestionTitle.trim()}
+                    size="sm"
+                    className="rounded-xl"
+                  >
+                    {isCreatingQuestion ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        생성 중...
+                      </>
+                    ) : (
+                      '추가'
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Questions List */}
             {isLoading ? (
