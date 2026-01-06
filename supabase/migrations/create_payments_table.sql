@@ -43,41 +43,57 @@ CREATE TABLE IF NOT EXISTS public.payments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 인덱스 생성
-CREATE INDEX idx_payments_user_id ON payments(user_id);
-CREATE INDEX idx_payments_order_id ON payments(order_id);
-CREATE INDEX idx_payments_payment_key ON payments(payment_key);
-CREATE INDEX idx_payments_status ON payments(status);
-CREATE INDEX idx_payments_created_at ON payments(created_at DESC);
+-- 인덱스 생성 (중복 생성 방지)
+CREATE INDEX IF NOT EXISTS idx_payments_user_id ON payments(user_id);
+CREATE INDEX IF NOT EXISTS idx_payments_order_id ON payments(order_id);
+CREATE INDEX IF NOT EXISTS idx_payments_payment_key ON payments(payment_key);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
+CREATE INDEX IF NOT EXISTS idx_payments_created_at ON payments(created_at DESC);
 
 -- RLS (Row Level Security) 활성화
 ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 
--- 사용자는 자신의 결제 정보만 조회 가능
-CREATE POLICY "Users can view own payments"
-  ON public.payments FOR SELECT
-  USING (auth.uid() = user_id);
+-- Policy 생성 (이미 존재하면 무시)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'payments' AND policyname = 'Users can view own payments'
+  ) THEN
+    CREATE POLICY "Users can view own payments"
+      ON public.payments FOR SELECT
+      USING (auth.uid() = user_id);
+  END IF;
 
--- 사용자는 자신의 결제 정보만 생성 가능
-CREATE POLICY "Users can create own payments"
-  ON public.payments FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'payments' AND policyname = 'Users can create own payments'
+  ) THEN
+    CREATE POLICY "Users can create own payments"
+      ON public.payments FOR INSERT
+      WITH CHECK (auth.uid() = user_id);
+  END IF;
 
--- 사용자는 자신의 결제 정보만 업데이트 가능 (상태 변경용)
-CREATE POLICY "Users can update own payments"
-  ON public.payments FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'payments' AND policyname = 'Users can update own payments'
+  ) THEN
+    CREATE POLICY "Users can update own payments"
+      ON public.payments FOR UPDATE
+      USING (auth.uid() = user_id)
+      WITH CHECK (auth.uid() = user_id);
+  END IF;
 
--- Admin은 모든 결제 정보 조회 가능
-CREATE POLICY "Admins can view all payments"
-  ON public.payments FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'payments' AND policyname = 'Admins can view all payments'
+  ) THEN
+    CREATE POLICY "Admins can view all payments"
+      ON public.payments FOR SELECT
+      USING (
+        EXISTS (
+          SELECT 1 FROM public.profiles
+          WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
+  END IF;
+END $$;
 
 -- 완료!
 COMMENT ON TABLE public.payments IS '토스페이먼츠 결제 정보';
