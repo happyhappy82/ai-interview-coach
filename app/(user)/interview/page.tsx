@@ -492,6 +492,9 @@ export default function InterviewPage() {
                     >
                       <div className="flex items-start space-x-3">
                         <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing" />
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted/50 flex-shrink-0">
+                          <span className="text-sm font-semibold text-muted-foreground">{index + 1}</span>
+                        </div>
                         <button
                           onClick={() => toggleQuestionSelection(question.id)}
                           className="flex items-start space-x-3 flex-1 text-left"
