@@ -475,6 +475,14 @@ export default function InterviewPage() {
                 {allQuestions.map((question, index) => {
                   const isSelected = selectedQuestionIds.has(question.id)
                   const isDragging = draggedIndex === index
+
+                  // 선택된 질문들의 순서 계산
+                  let selectedOrder = 0
+                  if (isSelected) {
+                    const selectedQuestions = allQuestions.filter(q => selectedQuestionIds.has(q.id))
+                    selectedOrder = selectedQuestions.findIndex(q => q.id === question.id) + 1
+                  }
+
                   return (
                     <div
                       key={question.id}
@@ -492,9 +500,6 @@ export default function InterviewPage() {
                     >
                       <div className="flex items-start space-x-3">
                         <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing" />
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted/50 flex-shrink-0">
-                          <span className="text-sm font-semibold text-muted-foreground">{index + 1}</span>
-                        </div>
                         <button
                           onClick={() => toggleQuestionSelection(question.id)}
                           className="flex items-start space-x-3 flex-1 text-left"
@@ -511,7 +516,14 @@ export default function InterviewPage() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <p className="font-medium text-sm sm:text-base">{question.title}</p>
+                            <div className="flex items-center gap-2">
+                              {isSelected && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-semibold">
+                                  질문 {selectedOrder}
+                                </span>
+                              )}
+                              <p className="font-medium text-sm sm:text-base">{question.title}</p>
+                            </div>
                             {question.category && (
                               <p className="text-xs text-muted-foreground mt-1">
                                 {question.category === 'custom' ? '커스텀 질문' : question.category}
