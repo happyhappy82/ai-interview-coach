@@ -507,6 +507,24 @@ export default async function ResultDetailPage({
             </li>
           </ul>
         </div>
+
+        {/* 전문가 피드백 */}
+        <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft border-0 sm:border sm:border-emerald-200/50">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-500 flex items-center justify-center shadow-lg">
+              <span className="text-2xl">👨‍💼</span>
+            </div>
+            <h3 className="text-xl font-bold">더 전문적인 피드백이 필요하신가요?</h3>
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed mb-6">
+            실제 취업 합격자들이 당신의 면접 답변을 직접 분석하고 1:1 맞춤 피드백을 제공합니다.
+          </p>
+          <Link href="/expert">
+            <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
+              전문가에게 피드백받기
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   )
