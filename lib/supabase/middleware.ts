@@ -28,9 +28,10 @@ export async function updateSession(request: NextRequest) {
   )
 
   // IMPORTANT: Session 새로고침 - 토큰 만료 방지
+  // getSession()은 만료된 토큰을 자동으로 갱신합니다
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession()
 
-  return { supabaseResponse, user }
+  return { supabaseResponse, user: session?.user ?? null }
 }
