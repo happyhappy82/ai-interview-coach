@@ -551,7 +551,7 @@ export default function InterviewPage() {
                   return (
                     <div key={question.id} className="relative">
                       {/* 드롭 위치 표시 가로선 */}
-                      {dragOverIndex === index && draggedIndex !== index && (
+                      {dragOverIndex === index && draggedIndex !== null && draggedIndex !== index && dragOverIndex !== draggedIndex + 1 && (
                         <div className="absolute -top-1 left-0 right-0 h-0.5 bg-primary z-10">
                           <div className="absolute left-0 -top-1 w-2 h-2 rounded-full bg-primary"></div>
                           <div className="absolute right-0 -top-1 w-2 h-2 rounded-full bg-primary"></div>
