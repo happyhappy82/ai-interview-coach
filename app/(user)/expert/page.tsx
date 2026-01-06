@@ -204,9 +204,11 @@ export default async function ExpertPage() {
             </div>
           </div>
 
-          <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
-            30,000원 / 30분 피드백 받기
-          </Button>
+          <Link href="/payments/checkout?amount=30000">
+            <Button className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700">
+              30,000원 / 30분 피드백 받기
+            </Button>
+          </Link>
         </div>
 
         {/* Reviews (준비 중) */}
