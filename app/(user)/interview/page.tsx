@@ -413,7 +413,7 @@ export default function InterviewPage() {
                 />
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">
-                    {newQuestionTitle.length}/200 • AI가 평가 기준을 자동 생성합니다
+                    AI가 평가 기준을 자동 생성합니다. 질문을 자세히 입력해주세요. ({newQuestionTitle.length}/200)
                   </p>
                   <Button
                     onClick={handleCreateInlineQuestion}
