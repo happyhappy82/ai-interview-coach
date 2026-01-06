@@ -48,8 +48,25 @@ export default function InterviewPage() {
   const [newQuestionTitle, setNewQuestionTitle] = useState('') // 새 질문 제목
   const [isCreatingQuestion, setIsCreatingQuestion] = useState(false) // 질문 생성 중
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null) // 드래그 중인 질문 인덱스
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0) // 현재 표시 중인 메시지 인덱스
   const { toast } = useToast()
   const router = useRouter()
+
+  // 분석 중 표시할 메시지들
+  const analyzingMessages = [
+    '🤖 AI가 답변을 분석하고 있습니다...',
+    '💡 잠시만 기다려주세요',
+    '✨ 실제 면접은 이것보다 더 쉬울 거예요!',
+    '📝 STAR 기법을 기억하세요',
+    '🎯 구체적인 사례가 좋은 답변의 핵심입니다',
+    '💪 긴장하지 마세요, 충분히 잘하고 있어요',
+    '🔍 AI가 꼼꼼하게 분석 중입니다',
+    '⭐ 자신감 있게 답변하는 것이 중요합니다',
+    '🌟 답변의 일관성을 유지하세요',
+    '🎓 경험에서 배운 점을 강조하세요',
+    '🚀 거의 다 됐어요, 조금만 더!',
+    '💼 실전에서도 이 자신감 그대로!',
+  ]
 
   useEffect(() => {
     loadQuestions()
@@ -242,21 +259,12 @@ export default function InterviewPage() {
   const uploadAndAnalyzeAll = async (localAnswers: LocalAnswer[]) => {
     try {
       setIsUploading(true)
+      setCurrentMessageIndex(0)
 
-      // 예상 처리 시간 계산 (업로드: 질문당 2.5초 + AI 분석: 7초)
-      const estimatedTime = Math.ceil(localAnswers.length * 2.5 + 7)
-      setRemainingTime(estimatedTime)
-
-      // 카운트다운 타이머 시작 (적응형 - 시간이 부족하면 자동 연장)
+      // 메시지 순환 타이머 (3초마다 메시지 변경)
       const timer = setInterval(() => {
-        setRemainingTime((prev) => {
-          // 5초 이하로 떨어지면 10초 추가 (처리가 더 오래 걸리는 경우)
-          if (prev <= 5) {
-            return prev + 10
-          }
-          return prev - 1
-        })
-      }, 1000)
+        setCurrentMessageIndex((prev) => (prev + 1) % analyzingMessages.length)
+      }, 3000)
 
       toast({
         title: '면접 완료!',
@@ -324,6 +332,9 @@ export default function InterviewPage() {
         }),
       })
 
+      // 타이머 정리
+      clearInterval(timer)
+
       if (batchAnalyzeResponse.ok) {
         console.log('일괄 분석 성공')
         toast({
@@ -339,14 +350,10 @@ export default function InterviewPage() {
         })
       }
 
-      // 타이머 정리 및 완료 처리
-      setRemainingTime(0)
-
       router.push('/result')
     } catch (error) {
       console.error('=== 업로드/분석 에러 ===')
       console.error('Error:', error)
-      setRemainingTime(0)
       toast({
         variant: 'destructive',
         title: '처리 실패',
@@ -643,17 +650,13 @@ export default function InterviewPage() {
                 </div>
                 <div className="text-center space-y-0.5 sm:space-y-1">
                   <p className="font-semibold text-base sm:text-lg">면접 분석 중</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    답변을 업로드하고 AI가 분석하고 있습니다...
-                  </p>
-                  {remainingTime > 0 && (
-                    <div className="mt-3 sm:mt-4">
-                      <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-primary/30">
-                        <span className="text-xl sm:text-2xl font-bold text-gradient mr-2">{remainingTime}</span>
-                        <span className="text-xs sm:text-sm text-muted-foreground font-medium">초 후 완료 예정</span>
-                      </div>
+                  <div className="mt-3 sm:mt-4">
+                    <div className="inline-flex items-center px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-2 border-primary/20 min-h-[60px] sm:min-h-[70px]">
+                      <p className="text-sm sm:text-base font-medium text-gradient animate-in fade-in duration-500">
+                        {analyzingMessages[currentMessageIndex]}
+                      </p>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
