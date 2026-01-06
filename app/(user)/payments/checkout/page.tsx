@@ -3,9 +3,8 @@
  * 경로: /payments/checkout?amount=30000
  *
  * 역할:
- * 1. 결제 정보 입력 (고객 이름)
- * 2. 서버에 주문 생성 요청 (/api/payments/create)
- * 3. 토스페이먼츠 결제창 호출 (loadTossPayments SDK)
+ * 1. 서버에 주문 생성 요청 (/api/payments/create)
+ * 2. 토스페이먼츠 결제창 호출 (loadTossPayments SDK)
  */
 
 'use client'
@@ -15,8 +14,6 @@ import { useSearchParams } from 'next/navigation'
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { ArrowLeft, CreditCard } from 'lucide-react'
 import Link from 'next/link'
 
@@ -26,15 +23,9 @@ export default function CheckoutPage() {
   const amount = Number(searchParams.get('amount')) || 30000
   const productName = '전문가 1:1 피드백 (30분)'
 
-  const [customerName, setCustomerName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const handlePayment = async () => {
-    if (!customerName.trim()) {
-      alert('이름을 입력해주세요')
-      return
-    }
-
     setIsLoading(true)
 
     try {
@@ -45,7 +36,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           amount,
           productName,
-          customerName,
+          customerName: '고객', // 서버에서 실제 사용자 정보로 대체됨
         }),
       })
 
@@ -76,8 +67,6 @@ export default function CheckoutPage() {
         orderName: productName,
         successUrl: `${window.location.origin}/payments/success`,
         failUrl: `${window.location.origin}/payments/fail`,
-        customerEmail: undefined,
-        customerName,
       })
     } catch (error: any) {
       console.error('결제 에러:', error)
@@ -111,7 +100,7 @@ export default function CheckoutPage() {
             <span className="text-gradient">결제하기</span>
           </h1>
           <p className="text-muted-foreground">
-            안전한 결제를 위해 정보를 입력해주세요
+            토스페이먼츠로 안전하게 결제하세요
           </p>
         </div>
 
@@ -136,25 +125,10 @@ export default function CheckoutPage() {
               </p>
             </div>
 
-            {/* 고객 정보 */}
-            <div className="space-y-2">
-              <Label htmlFor="customerName" className="text-sm font-semibold">
-                이름 *
-              </Label>
-              <Input
-                id="customerName"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="홍길동"
-                disabled={isLoading}
-                className="rounded-xl"
-              />
-            </div>
-
             {/* 결제 버튼 */}
             <Button
               onClick={handlePayment}
-              disabled={isLoading || !customerName.trim()}
+              disabled={isLoading}
               className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
             >
               {isLoading ? '처리 중...' : '결제하기'}
