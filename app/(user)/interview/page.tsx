@@ -48,6 +48,7 @@ export default function InterviewPage() {
   const [newQuestionTitle, setNewQuestionTitle] = useState('') // 새 질문 제목
   const [isCreatingQuestion, setIsCreatingQuestion] = useState(false) // 질문 생성 중
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null) // 드래그 중인 질문 인덱스
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null) // 드래그 오버 중인 위치
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0) // 현재 표시 중인 메시지 인덱스
   const [deletingQuestionId, setDeletingQuestionId] = useState<string | null>(null) // 삭제 중인 질문 ID
   const { toast } = useToast()
@@ -181,6 +182,7 @@ export default function InterviewPage() {
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
+    setDragOverIndex(index)
   }
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
@@ -188,6 +190,7 @@ export default function InterviewPage() {
 
     if (draggedIndex === null || draggedIndex === dropIndex) {
       setDraggedIndex(null)
+      setDragOverIndex(null)
       return
     }
 
@@ -201,6 +204,12 @@ export default function InterviewPage() {
 
     setAllQuestions(newQuestions)
     setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
   }
 
   const handleDeleteClick = async (id: string, title: string, isCustom: boolean) => {
@@ -536,20 +545,29 @@ export default function InterviewPage() {
                   }
 
                   return (
-                    <div
-                      key={question.id}
-                      draggable
-                      onDragStart={() => handleDragStart(index)}
-                      onDragOver={(e) => handleDragOver(e, index)}
-                      onDrop={(e) => handleDrop(e, index)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move group relative ${
-                        isDragging
-                          ? 'opacity-50'
-                          : isSelected
-                          ? 'border-primary bg-primary/5 shadow-md'
-                          : 'border-muted hover:border-primary/50 hover:bg-muted/30'
-                      }`}
-                    >
+                    <div key={question.id} className="relative">
+                      {/* 드롭 위치 표시 가로선 */}
+                      {dragOverIndex === index && draggedIndex !== index && (
+                        <div className="absolute -top-1 left-0 right-0 h-0.5 bg-primary z-10">
+                          <div className="absolute left-0 -top-1 w-2 h-2 rounded-full bg-primary"></div>
+                          <div className="absolute right-0 -top-1 w-2 h-2 rounded-full bg-primary"></div>
+                        </div>
+                      )}
+
+                      <div
+                        draggable
+                        onDragStart={() => handleDragStart(index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDrop={(e) => handleDrop(e, index)}
+                        onDragEnd={handleDragEnd}
+                        className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move group relative ${
+                          isDragging
+                            ? 'opacity-50'
+                            : isSelected
+                            ? 'border-primary bg-primary/5 shadow-md'
+                            : 'border-muted hover:border-primary/50 hover:bg-muted/30'
+                        }`}
+                      >
                       <div className="flex items-start space-x-3">
                         <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing" />
                         <button
@@ -600,6 +618,7 @@ export default function InterviewPage() {
                             <X className="h-4 w-4" />
                           )}
                         </button>
+                      </div>
                       </div>
                     </div>
                   )
