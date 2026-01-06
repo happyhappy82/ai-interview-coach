@@ -199,8 +199,12 @@ export default function InterviewPage() {
 
     // 드래그한 항목 제거
     newQuestions.splice(draggedIndex, 1)
+
+    // dropIndex 조정: 드래그한 항목이 앞쪽에 있었다면 인덱스를 1 감소
+    const adjustedDropIndex = draggedIndex < dropIndex ? dropIndex - 1 : dropIndex
+
     // 새 위치에 삽입
-    newQuestions.splice(dropIndex, 0, draggedQuestion)
+    newQuestions.splice(adjustedDropIndex, 0, draggedQuestion)
 
     setAllQuestions(newQuestions)
     setDraggedIndex(null)
