@@ -544,7 +544,7 @@ export default function InterviewPage() {
                       onDrop={(e) => handleDrop(e, index)}
                       className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move group relative ${
                         isDragging
-                          ? 'opacity-50 scale-95'
+                          ? 'opacity-50'
                           : isSelected
                           ? 'border-primary bg-primary/5 shadow-md'
                           : 'border-muted hover:border-primary/50 hover:bg-muted/30'
