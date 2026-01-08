@@ -456,12 +456,19 @@ export default function InterviewPage() {
               </div>
             </div>
 
-            {/* Selection Counter */}
-            <div className="mb-6">
+            {/* Selection Counter & Score Info */}
+            <div className="mb-6 flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-primary/30">
                 <span className="text-2xl font-bold text-gradient mr-2">{selectedQuestionIds.size}</span>
                 <span className="text-sm text-muted-foreground font-medium">/ 10개 선택됨</span>
               </div>
+              {selectedQuestionIds.size >= 3 && (
+                <div className="inline-flex items-center px-4 py-3 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                    총 100점 = 문항당 <span className="font-bold">{Math.round(100 / selectedQuestionIds.size * 10) / 10}점</span>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Add Question Button */}
@@ -660,11 +667,18 @@ export default function InterviewPage() {
               </Button>
             </Link>
             {!isLoading && (
-              <div className="glass px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-2xl shadow-soft">
-                <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
-                  <span className="text-gradient">{currentQuestionIndex + 1}</span>
-                  <span className="text-muted-foreground"> / {questions.length}</span>
-                </span>
+              <div className="flex items-center gap-2">
+                <div className="glass px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-2xl shadow-soft">
+                  <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
+                    <span className="text-gradient">{currentQuestionIndex + 1}</span>
+                    <span className="text-muted-foreground"> / {questions.length}</span>
+                  </span>
+                </div>
+                <div className="glass px-3 sm:px-4 py-2 sm:py-3 rounded-2xl shadow-soft">
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground whitespace-nowrap">
+                    문항당 <span className="text-gradient font-bold">{Math.round(100 / questions.length * 10) / 10}점</span>
+                  </span>
+                </div>
               </div>
             )}
           </div>

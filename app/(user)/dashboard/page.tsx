@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { BarChart3, FileText, Clock, TrendingUp } from 'lucide-react'
+import { DashboardGuideButton } from '@/components/dashboard/dashboard-guide-button'
 
 export default async function UserDashboard() {
   const supabase = await createClient()
@@ -38,11 +39,14 @@ export default async function UserDashboard() {
               안녕하세요, <span className="font-medium text-foreground">{user?.email}</span>님
             </p>
           </div>
-          <form action="/api/auth/signout" method="post">
-            <Button variant="outline" type="submit" className="px-6 py-3 transition-all">
-              로그아웃
-            </Button>
-          </form>
+          <div className="flex items-center gap-3">
+            <DashboardGuideButton />
+            <form action="/api/auth/signout" method="post">
+              <Button variant="outline" type="submit" className="px-6 py-3 transition-all">
+                로그아웃
+              </Button>
+            </form>
+          </div>
         </div>
 
         {/* Stats */}
