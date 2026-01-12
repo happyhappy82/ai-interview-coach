@@ -3,17 +3,16 @@
 import { useState, useEffect } from 'react'
 import { AudioRecorder } from '@/components/interview/audio-recorder'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Upload, Loader2, Plus, X, GripVertical, Building2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Plus, X, GripVertical, Building2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
-import { CompanySelector } from '@/components/interview/company-selector'
+import { CompanyInterviewModal } from '@/components/interview/company-interview-modal'
 import type { Company } from '@/types/database.types'
 
-type InterviewMode = 'company-select' | 'question-select' | 'interview'
+type InterviewMode = 'question-select' | 'interview'
 
 interface Question {
   id: string
@@ -39,8 +38,11 @@ interface LocalAnswer {
 }
 
 export default function InterviewPage() {
-  // 회사 선택 관련 상태
-  const [mode, setMode] = useState<InterviewMode>('company-select')
+  // 모드 상태
+  const [mode, setMode] = useState<InterviewMode>('question-select')
+
+  // 기업 면접 모달 상태
+  const [showCompanyModal, setShowCompanyModal] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
 
   const [allQuestions, setAllQuestions] = useState<Question[]>([]) // 모든 질문
@@ -78,12 +80,12 @@ export default function InterviewPage() {
     '💼 실전에서도 이 자신감 그대로!',
   ]
 
-  // 회사 선택 없이 질문 선택 모드로 진입했을 때만 질문 로드
+  // 페이지 로드 시 질문 로드
   useEffect(() => {
-    if (mode === 'question-select' && !selectedCompany && allQuestions.length === 0) {
+    if (allQuestions.length === 0) {
       loadQuestions()
     }
-  }, [mode, selectedCompany])
+  }, [])
 
   const loadQuestions = async (companyId?: string) => {
     setIsLoading(true)
@@ -110,64 +112,18 @@ export default function InterviewPage() {
     }
   }
 
-  // 회사 선택 핸들러 (질문 선택 모드로 전환)
-  const handleSelectCompany = async (company: Company) => {
+  // 기업 면접 모달에서 면접 시작
+  const handleStartCompanyInterview = (companyQuestions: Question[], company: Company) => {
     setSelectedCompany(company)
-    setMode('question-select')
-    await loadQuestions(company.id)
-  }
+    setQuestions(companyQuestions)
+    setSelectedQuestionIds(new Set(companyQuestions.map((q: Question) => q.id)))
+    setMode('interview')
+    setInterviewStarted(true)
 
-  // 빠른 시작 핸들러 (바로 면접 시작)
-  const handleQuickStart = async (companySlug: string) => {
-    try {
-      const response = await fetch(`/api/companies/${companySlug}/quick-start`)
-      if (!response.ok) {
-        throw new Error('Failed to load quick start questions')
-      }
-
-      const { data: quickStartQuestions, company } = await response.json()
-
-      if (!quickStartQuestions || quickStartQuestions.length === 0) {
-        toast({
-          variant: 'destructive',
-          title: '질문이 없습니다',
-          description: '해당 회사의 면접 질문이 아직 준비되지 않았습니다.',
-        })
-        return
-      }
-
-      setSelectedCompany(company)
-      setQuestions(quickStartQuestions)
-      setSelectedQuestionIds(new Set(quickStartQuestions.map((q: Question) => q.id)))
-      setMode('interview')
-      setInterviewStarted(true)
-
-      toast({
-        title: `${company.name} 면접 시작!`,
-        description: `${quickStartQuestions.length}개 질문으로 면접을 시작합니다.`,
-      })
-    } catch (error) {
-      console.error('Quick start error:', error)
-      toast({
-        variant: 'destructive',
-        title: '면접 시작 실패',
-        description: '다시 시도해주세요.',
-      })
-    }
-  }
-
-  // 회사 없이 직접 질문 선택
-  const handleSkipCompanySelect = () => {
-    setMode('question-select')
-    loadQuestions()
-  }
-
-  // 회사 선택 화면으로 돌아가기
-  const handleBackToCompanySelect = () => {
-    setMode('company-select')
-    setSelectedCompany(null)
-    setAllQuestions([])
-    setSelectedQuestionIds(new Set())
+    toast({
+      title: `${company.name} 면접 시작!`,
+      description: `${companyQuestions.length}개 질문으로 면접을 시작합니다.`,
+    })
   }
 
   const toggleQuestionSelection = (questionId: string) => {
@@ -499,47 +455,6 @@ export default function InterviewPage() {
 
   const currentQuestion = questions[currentQuestionIndex]
 
-  // 회사 선택 화면
-  if (mode === 'company-select') {
-    return (
-      <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
-        <div className="container mx-auto max-w-6xl px-0 sm:px-4 space-y-4 sm:space-y-6 md:space-y-8">
-          {/* Header */}
-          <div className="flex items-center justify-between animate-fade-in">
-            <Link href="/dashboard">
-              <Button variant="outline" className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base">
-                <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">대시보드</span>
-                <span className="sm:hidden">뒤로</span>
-              </Button>
-            </Link>
-          </div>
-
-          {/* Title */}
-          <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-soft">
-            <div className="text-center space-y-4 mb-8">
-              <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
-                <Building2 className="w-10 h-10" />
-              </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-                <span className="text-gradient">회사별 면접 연습</span>
-              </h1>
-              <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-                목표 회사를 선택하고 실전과 같은 면접을 준비하세요
-              </p>
-            </div>
-
-            <CompanySelector
-              onSelectCompany={handleSelectCompany}
-              onQuickStart={handleQuickStart}
-              onSkip={handleSkipCompanySelect}
-            />
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   // 질문 선택 화면
   if (mode === 'question-select' && !interviewStarted) {
     return (
@@ -547,49 +462,17 @@ export default function InterviewPage() {
         <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-6 md:space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between animate-fade-in">
-            <Button
-              variant="outline"
-              onClick={handleBackToCompanySelect}
-              className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base"
-            >
-              <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">회사 선택</span>
-              <span className="sm:hidden">뒤로</span>
-            </Button>
-          </div>
-
-          {/* 선택된 회사 정보 표시 */}
-          {selectedCompany && (
-            <div className="glass rounded-2xl p-4 flex items-center gap-4 shadow-soft">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
-                {selectedCompany.logo_url ? (
-                  <img
-                    src={selectedCompany.logo_url}
-                    alt={selectedCompany.name}
-                    className="w-8 h-8 object-contain"
-                  />
-                ) : (
-                  <span className="text-xl font-bold text-gray-500">
-                    {selectedCompany.name.charAt(0)}
-                  </span>
-                )}
-              </div>
-              <div className="flex-1">
-                <h2 className="font-bold text-lg">{selectedCompany.name} 면접</h2>
-                <p className="text-sm text-muted-foreground">
-                  {allQuestions.length}개 질문 중에서 선택하세요
-                </p>
-              </div>
+            <Link href="/dashboard">
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBackToCompanySelect}
-                className="text-muted-foreground"
+                variant="outline"
+                className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base"
               >
-                회사 변경
+                <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">대시보드</span>
+                <span className="sm:hidden">뒤로</span>
               </Button>
-            </div>
-          )}
+            </Link>
+          </div>
 
           {/* Title */}
           <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-soft">
@@ -622,17 +505,39 @@ export default function InterviewPage() {
               )}
             </div>
 
-            {/* Add Question Button */}
-            {!isLoading && !showInlineForm && (
-              <button
-                onClick={() => setShowInlineForm(true)}
-                className="w-full mb-4 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all group"
-              >
-                <div className="flex items-center justify-center space-x-2 text-primary">
-                  <Plus className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold">나만의 질문 추가하기</span>
-                </div>
-              </button>
+            {/* Company Interview & Add Question Buttons */}
+            {!isLoading && (
+              <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                {/* 기업 면접 버튼 */}
+                <button
+                  onClick={() => setShowCompanyModal(true)}
+                  className="flex-1 p-4 rounded-xl border-2 border-blue-500/30 bg-gradient-to-r from-blue-500/5 to-purple-500/5 hover:from-blue-500/10 hover:to-purple-500/10 hover:border-blue-500/60 transition-all group"
+                >
+                  <div className="flex items-center justify-center space-x-2 text-blue-600">
+                    <Building2 className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                    <span className="font-semibold">기업 면접 보기</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    네이버, 삼성, 카카오 등 실제 면접 질문
+                  </p>
+                </button>
+
+                {/* 나만의 질문 추가 버튼 */}
+                {!showInlineForm && (
+                  <button
+                    onClick={() => setShowInlineForm(true)}
+                    className="flex-1 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all group"
+                  >
+                    <div className="flex items-center justify-center space-x-2 text-primary">
+                      <Plus className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                      <span className="font-semibold">나만의 질문 추가하기</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      직접 질문을 만들어 연습하세요
+                    </p>
+                  </button>
+                )}
+              </div>
             )}
 
             {/* Inline Question Creation Form */}
@@ -800,6 +705,13 @@ export default function InterviewPage() {
             </Button>
           </div>
         </div>
+
+        {/* 기업 면접 모달 */}
+        <CompanyInterviewModal
+          open={showCompanyModal}
+          onOpenChange={setShowCompanyModal}
+          onStartInterview={handleStartCompanyInterview}
+        />
       </div>
     )
   }
