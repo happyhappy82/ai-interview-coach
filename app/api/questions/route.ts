@@ -3,11 +3,12 @@ import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-// GET /api/questions?category=general - 기본 질문 + 사용자 커스텀 질문 조회
+// GET /api/questions?category=general&company=uuid - 기본 질문 + 사용자 커스텀 질문 조회
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
+    const companyId = searchParams.get('company')
 
     const supabase = await createClient()
 
@@ -19,6 +20,27 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // 회사 ID가 지정된 경우: 해당 회사의 질문만 반환
+    if (companyId) {
+      const { data, error } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('company_id', companyId)
+        .order('order', { ascending: true })
+
+      if (error) {
+        console.error('Database error:', error)
+        return NextResponse.json(
+          { error: 'Failed to fetch questions' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({ data })
+    }
+
+    // 기존 로직: 기본 질문 + 사용자 커스텀 질문
+
     // 1. 사용자가 숨긴 질문 ID 목록 조회
     const { data: hiddenQuestions } = await supabase
       .from('hidden_questions')
@@ -27,10 +49,11 @@ export async function GET(request: Request) {
 
     const hiddenIds = hiddenQuestions?.map(h => h.question_id) || []
 
-    // 2. 기본 질문 (is_custom = false) + 사용자의 커스텀 질문 (is_custom = true, user_id = current user)
+    // 2. 기본 질문 (is_custom = false, company_id = null) + 사용자의 커스텀 질문 (is_custom = true, user_id = current user)
     let query = supabase
       .from('questions')
       .select('*')
+      .is('company_id', null) // 회사 프리셋이 아닌 질문만
       .or(`and(is_custom.eq.false${category ? `,category.eq.${category}` : ''}),and(is_custom.eq.true,user_id.eq.${user.id})`)
       .order('order', { ascending: true })
 
