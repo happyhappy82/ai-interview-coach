@@ -49,7 +49,7 @@ export default async function LandingPage() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-[#F5F5F7]/80 backdrop-blur-md border-b border-gray-200/50 transition-all duration-300">
         <div className="max-w-[980px] mx-auto px-4 h-12 flex items-center justify-between text-[12px]">
-          <div className="font-semibold tracking-tight cursor-pointer">AI 면접 코치</div>
+          <Link href="/" className="font-semibold tracking-tight cursor-pointer hover:text-[#0071e3] transition-colors">AI 면접 코치</Link>
           <div className="flex gap-6 items-center">
             <Link href="/guide" className="cursor-pointer hover:text-[#0071e3] transition-colors text-gray-500 hidden sm:inline">소개</Link>
             <GoogleSignInButton variant="compact" />
@@ -78,18 +78,32 @@ export default async function LandingPage() {
           </div>
 
           {/* Hero Graphic: Interview Chat Mock */}
-          <div className="mt-16 mx-auto max-w-2xl h-64 md:h-96 bg-white rounded-t-[40px] shadow-2xl border border-gray-200 overflow-hidden relative">
-            <div className="absolute top-0 w-full h-8 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
+          <div className="mt-16 mx-auto max-w-2xl bg-white rounded-[28px] shadow-2xl border border-gray-200 overflow-hidden relative">
+            <div className="w-full h-7 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
             </div>
-            <div className="p-8 flex flex-col items-center justify-center h-full space-y-4">
-              <div className="w-3/4 h-12 bg-gray-100 rounded-2xl rounded-tl-none self-start animate-pulse"></div>
-              <div className="w-1/2 h-12 bg-[#0071e3] rounded-2xl rounded-br-none self-end opacity-90"></div>
-              <div className="w-2/3 h-12 bg-gray-100 rounded-2xl rounded-tl-none self-start delay-75 animate-pulse"></div>
+            <div className="p-6 md:p-10 flex flex-col space-y-5">
+              {/* AI 질문 1 */}
+              <div className="self-start">
+                <div className="bg-gray-100 text-gray-700 px-5 py-3 rounded-2xl rounded-tl-sm text-sm md:text-base font-medium">
+                  본인 소개 해주세요.
+                </div>
+              </div>
+              {/* 사용자 답변 */}
+              <div className="self-end">
+                <div className="bg-[#0071e3] text-white px-5 py-3 rounded-2xl rounded-br-sm text-sm md:text-base font-medium">
+                  안녕하십니까. 지원자 OOO입니다 ....
+                </div>
+              </div>
+              {/* AI 질문 2 */}
+              <div className="self-start">
+                <div className="bg-gray-100 text-gray-700 px-5 py-3 rounded-2xl rounded-tl-sm text-sm md:text-base font-medium">
+                  우리 회사에 지원하신 동기가 어떻게 되나요?
+                </div>
+              </div>
             </div>
-            <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-white to-transparent"></div>
           </div>
         </div>
 
