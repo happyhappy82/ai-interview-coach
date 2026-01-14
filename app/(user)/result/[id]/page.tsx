@@ -413,27 +413,26 @@ export default async function ResultDetailPage({
                 </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {feedback.answers.map((answer, index) => (
-                  <div key={index} className="p-6 rounded-2xl bg-white border border-gray-100 space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-rose-600 text-sm font-bold">Q{index + 1}</span>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-lg text-gray-900 mb-3">{answer.questionTitle}</h4>
-                        {answer.audioUrl ? (
-                          <audio src={answer.audioUrl} controls className="w-full rounded-xl mb-3" />
-                        ) : (
-                          <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-200 mb-3">
-                            <p className="text-sm text-yellow-800">오디오 파일을 찾을 수 없습니다.</p>
-                          </div>
-                        )}
-                        {answer.transcript && (
-                          <TranscriptToggle transcript={answer.transcript} />
-                        )}
-                      </div>
+                  <div key={index} className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white border border-gray-100 space-y-3">
+                    {/* 질문 제목 */}
+                    <div className="flex items-center space-x-2">
+                      <span className="text-rose-600 text-sm font-bold">Q{index + 1}</span>
+                      <h4 className="font-bold text-base sm:text-lg text-gray-900">{answer.questionTitle}</h4>
                     </div>
+                    {/* 오디오 플레이어 - 전체 너비 */}
+                    {answer.audioUrl ? (
+                      <audio src={answer.audioUrl} controls className="w-full rounded-lg" />
+                    ) : (
+                      <div className="p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                        <p className="text-sm text-yellow-800">오디오 파일을 찾을 수 없습니다.</p>
+                      </div>
+                    )}
+                    {/* 녹취록 - 전체 너비 */}
+                    {answer.transcript && (
+                      <TranscriptToggle transcript={answer.transcript} />
+                    )}
                   </div>
                 ))}
               </div>
