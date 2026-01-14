@@ -211,10 +211,19 @@
     background-clip: unset !important;
   }
 
-  /* 페이지 나눔 설정 */
+  /* 페이지 나눔 설정 - 자연스럽게 나눔 허용 */
   .glass-card {
-    page-break-inside: avoid;
-    break-inside: avoid;
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  /* 각 섹션 간격 최소화 */
+  #result-content .space-y-6 {
+    gap: 16px !important;
+  }
+
+  #result-content > .space-y-6 > * {
+    margin-bottom: 16px !important;
   }
 
   /* 링크 URL 표시 안함 */
