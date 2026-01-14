@@ -28,6 +28,43 @@ interface CompanyInterviewModalProps {
 
 type Step = 'company' | 'category'
 
+// 한국 기업 로고 매핑 (회사명 기준)
+const COMPANY_LOGOS: Record<string, string> = {
+  '네이버': '/logos/Naver_Logotype.svg',
+  '카카오': '/logos/Kakao_CI_yellow.svg',
+  '토스': '/logos/Toss-logo.svg',
+  '쿠팡': '/logos/Coupang_logo.png',
+  '배달의민족': '/logos/baemin.svg',
+  '당근마켓': '/logos/DaangnMarket_logo.png',
+  '삼성전자': '/logos/Samsung_logo_blue.png',
+  'LG전자': '/logos/LG_Electronics_Logo_(modern).svg',
+  '현대자동차': '/logos/Hyundai_Motor_Company_logo.svg',
+  'SK하이닉스': '/logos/SK_Hynix.svg',
+}
+
+// 회사명에서 로고 URL 가져오기
+const getCompanyLogo = (companyName: string): string | null => {
+  return COMPANY_LOGOS[companyName] || null
+}
+
+// 회사 배경색 (로고 fallback용)
+const COMPANY_COLORS: Record<string, string> = {
+  '네이버': '#03C75A',
+  '카카오': '#FEE500',
+  '토스': '#0064FF',
+  '쿠팡': '#E31837',
+  '배달의민족': '#2AC1BC',
+  '당근마켓': '#FF6F0F',
+  '삼성전자': '#1428A0',
+  'LG전자': '#A50034',
+  '현대자동차': '#002C5F',
+  'SK하이닉스': '#E4002B',
+}
+
+const getCompanyColor = (companyName: string): string => {
+  return COMPANY_COLORS[companyName] || '#6B7280'
+}
+
 export function CompanyInterviewModal({
   open,
   onOpenChange,
@@ -39,6 +76,7 @@ export function CompanyInterviewModal({
   const [categories, setCategories] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isStarting, setIsStarting] = useState(false)
+  const [failedLogos, setFailedLogos] = useState<Set<string>>(new Set())
 
   // 회사 목록 로드
   useEffect(() => {
@@ -133,6 +171,40 @@ export function CompanyInterviewModal({
     return labels[category] || category
   }
 
+  const handleImageError = (companyName: string) => {
+    setFailedLogos(prev => new Set(prev).add(companyName))
+  }
+
+  // 회사 로고 렌더링 컴포넌트
+  const CompanyLogo = ({ company, size = 'sm' }: { company: Company, size?: 'sm' | 'lg' }) => {
+    const logoUrl = getCompanyLogo(company.name)
+    const bgColor = getCompanyColor(company.name)
+    const showFallback = !logoUrl || failedLogos.has(company.name)
+    const sizeClasses = size === 'lg' ? 'w-12 h-12' : 'w-10 h-10'
+    const textSize = size === 'lg' ? 'text-xl' : 'text-lg'
+    const imgSize = size === 'lg' ? 'w-8 h-8' : 'w-6 h-6'
+
+    return (
+      <div
+        className={`${sizeClasses} rounded-xl flex items-center justify-center overflow-hidden`}
+        style={{ backgroundColor: showFallback ? bgColor : '#f3f4f6' }}
+      >
+        {!showFallback ? (
+          <img
+            src={logoUrl}
+            alt={company.name}
+            className={`${imgSize} object-contain`}
+            onError={() => handleImageError(company.name)}
+          />
+        ) : (
+          <span className={`${textSize} font-bold text-white`}>
+            {company.name.charAt(0)}
+          </span>
+        )}
+      </div>
+    )
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto bg-white/95 backdrop-blur-xl border-gray-200/50 rounded-3xl">
@@ -173,22 +245,7 @@ export function CompanyInterviewModal({
                       className="w-full flex items-center justify-between p-3 rounded-2xl border border-gray-200 hover:border-[#0071e3] hover:bg-blue-50/50 transition-all group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                          {company.logo_url ? (
-                            <img
-                              src={company.logo_url}
-                              alt={company.name}
-                              className="w-6 h-6 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none'
-                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                              }}
-                            />
-                          ) : null}
-                          <span className={`text-lg font-bold text-gray-500 ${company.logo_url ? 'hidden' : ''}`}>
-                            {company.name.charAt(0)}
-                          </span>
-                        </div>
+                        <CompanyLogo company={company} />
                         <div className="text-left">
                           <p className="font-medium text-gray-900">{company.name}</p>
                           <p className="text-xs text-gray-500">
@@ -213,22 +270,7 @@ export function CompanyInterviewModal({
                       className="w-full flex items-center justify-between p-3 rounded-2xl border border-gray-200 hover:border-[#0071e3] hover:bg-blue-50/50 transition-all group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                          {company.logo_url ? (
-                            <img
-                              src={company.logo_url}
-                              alt={company.name}
-                              className="w-6 h-6 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none'
-                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                              }}
-                            />
-                          ) : null}
-                          <span className={`text-lg font-bold text-gray-500 ${company.logo_url ? 'hidden' : ''}`}>
-                            {company.name.charAt(0)}
-                          </span>
-                        </div>
+                        <CompanyLogo company={company} />
                         <div className="text-left">
                           <p className="font-medium text-gray-900">{company.name}</p>
                           <p className="text-xs text-gray-500">
@@ -255,19 +297,7 @@ export function CompanyInterviewModal({
             </button>
 
             <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                {selectedCompany.logo_url ? (
-                  <img
-                    src={selectedCompany.logo_url}
-                    alt={selectedCompany.name}
-                    className="w-8 h-8 object-contain"
-                  />
-                ) : (
-                  <span className="text-xl font-bold text-gray-500">
-                    {selectedCompany.name.charAt(0)}
-                  </span>
-                )}
-              </div>
+              <CompanyLogo company={selectedCompany} size="lg" />
               <div>
                 <p className="font-semibold text-gray-900">{selectedCompany.name}</p>
                 <p className="text-sm text-gray-500">
@@ -305,10 +335,7 @@ export function CompanyInterviewModal({
                       </p>
                     </div>
                   </div>
-                  <button
-                    disabled={isStarting}
-                    className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-4 py-2 text-sm font-medium transition-all disabled:opacity-50"
-                  >
+                  <span className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-4 py-2 text-sm font-medium transition-all">
                     {isStarting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -317,7 +344,7 @@ export function CompanyInterviewModal({
                     ) : (
                       '바로 면접 보기'
                     )}
-                  </button>
+                  </span>
                 </button>
 
                 {/* 카테고리별 (추후 확장) */}
@@ -339,12 +366,9 @@ export function CompanyInterviewModal({
                         </p>
                       </div>
                     </div>
-                    <button
-                      disabled={isStarting}
-                      className="inline-flex items-center justify-center bg-white text-[#0071e3] hover:bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm font-medium transition-all disabled:opacity-50"
-                    >
+                    <span className="inline-flex items-center justify-center bg-white text-[#0071e3] hover:bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm font-medium transition-all">
                       면접 보기
-                    </button>
+                    </span>
                   </button>
                 ))}
               </div>

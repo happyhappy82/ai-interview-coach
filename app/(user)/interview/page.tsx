@@ -776,14 +776,28 @@ export default function InterviewPage() {
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-relaxed text-gray-900 break-keep">
                   {currentQuestion.title}
                 </h2>
-                {/* 기업 판단기준 힌트 */}
+                {/* 기업별 평가 기준 (회사 면접 시) */}
+                {selectedCompany?.evaluation_criteria && (
+                  <div className="flex items-start space-x-3 p-4 rounded-2xl bg-purple-50 border border-purple-200/50">
+                    <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0">
+                      <Building2 className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-purple-700 mb-2">{selectedCompany.name} 평가 기준</p>
+                      <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                        {selectedCompany.evaluation_criteria}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {/* 질문별 평가 힌트 */}
                 {currentQuestion.evaluation_context && (
                   <div className="flex items-start space-x-3 p-4 rounded-2xl bg-amber-50 border border-amber-200/50">
                     <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <span className="text-white text-xs font-bold">!</span>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-amber-700 mb-1">기업 판단기준</p>
+                      <p className="text-xs font-semibold text-amber-700 mb-1">질문 평가 포인트</p>
                       <p className="text-sm text-gray-700 leading-relaxed">
                         {currentQuestion.evaluation_context}
                       </p>

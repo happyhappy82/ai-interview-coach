@@ -63,6 +63,7 @@ export interface Database {
           question_count: number
           display_order: number
           is_active: boolean
+          evaluation_criteria: string | null
           created_at: string
           updated_at: string
         }
@@ -76,6 +77,7 @@ export interface Database {
           question_count?: number
           display_order?: number
           is_active?: boolean
+          evaluation_criteria?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -89,6 +91,7 @@ export interface Database {
           question_count?: number
           display_order?: number
           is_active?: boolean
+          evaluation_criteria?: string | null
           created_at?: string
           updated_at?: string
         }
