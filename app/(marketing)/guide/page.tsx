@@ -51,7 +51,7 @@ export default function GuidePage() {
     },
     {
       title: 'AI 정밀 분석',
-      description: 'GPT-4 기반 AI가 답변의 논리성, 구체성, 진정성을 분석',
+      description: 'Gemini 3 Pro, Claude 4.5 Opus, GPT-5.2 기반 AI가 답변의 논리성, 구체성, 진정성을 분석',
     },
     {
       title: 'STAR 기법 피드백',
