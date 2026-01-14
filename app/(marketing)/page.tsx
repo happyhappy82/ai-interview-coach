@@ -2,7 +2,7 @@ import { GoogleSignInButton } from '@/components/auth/google-sign-in-button'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
-import { ChevronRight, Play } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -51,8 +51,7 @@ export default async function LandingPage() {
         <div className="max-w-[980px] mx-auto px-4 h-12 flex items-center justify-between text-[12px]">
           <div className="font-semibold tracking-tight cursor-pointer">AI 면접 코치</div>
           <div className="flex gap-6 items-center">
-            <span className="cursor-pointer hover:text-[#0071e3] transition-colors text-gray-500 hidden sm:inline">소개</span>
-            <span className="cursor-pointer hover:text-[#0071e3] transition-colors text-gray-500 hidden sm:inline">기능</span>
+            <Link href="/guide" className="cursor-pointer hover:text-[#0071e3] transition-colors text-gray-500 hidden sm:inline">소개</Link>
             <GoogleSignInButton variant="compact" />
           </div>
         </div>
@@ -73,9 +72,9 @@ export default async function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8">
             <GoogleSignInButton />
-            <button className="text-[#0066cc] hover:underline flex items-center text-[17px] group">
+            <Link href="/guide" className="text-[#0066cc] hover:underline flex items-center text-[17px] group">
               자세히 알아보기 <ChevronRight size={16} className="ml-1 group-hover:translate-x-0.5 transition-transform" />
-            </button>
+            </Link>
           </div>
 
           {/* Hero Graphic: Interview Chat Mock */}

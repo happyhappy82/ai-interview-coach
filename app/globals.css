@@ -161,10 +161,35 @@
     padding: 0 !important;
   }
 
+  /* 결과 페이지: 콘텐츠 영역만 표시 */
+  #result-content {
+    margin: 0 !important;
+    padding: 20px !important;
+  }
+
   /* 불필요한 요소 숨기기 */
-  button,
   nav,
-  .no-print {
+  .no-print,
+  a[href="/dashboard"],
+  a[href="/interview"],
+  a[href="/expert"] {
+    display: none !important;
+  }
+
+  /* 버튼들 숨기기 (인쇄/공유/다시 면접 보기 등) */
+  button:not(#result-content button),
+  .grid.sm\:grid-cols-2 {
+    display: none !important;
+  }
+
+  /* 오디오 플레이어 숨기기 (인쇄 시 의미 없음) */
+  audio {
+    display: none !important;
+  }
+
+  /* 팁/전문가 피드백 섹션 숨기기 */
+  .border-blue-200\/50,
+  .border-emerald-200\/50 {
     display: none !important;
   }
 
@@ -175,6 +200,7 @@
     background: white !important;
     backdrop-filter: none !important;
     border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
   }
 
   /* 그라데이션 텍스트를 일반 텍스트로 */
@@ -183,5 +209,16 @@
     color: #5b21b6 !important;
     -webkit-background-clip: unset !important;
     background-clip: unset !important;
+  }
+
+  /* 페이지 나눔 설정 */
+  .glass-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* 링크 URL 표시 안함 */
+  a::after {
+    content: none !important;
   }
 }

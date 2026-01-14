@@ -3,8 +3,6 @@
 import { Button } from '@/components/ui/button'
 import { Share2, Printer } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 
 interface ResultActionsProps {
   resultId: string
@@ -15,104 +13,15 @@ interface ResultActionsProps {
 export function ResultActions({ resultId, score, summary }: ResultActionsProps) {
   const { toast } = useToast()
 
+  // 인쇄 대화상자 열기 (PDF 저장은 인쇄 창에서 선택)
   const handlePrint = () => {
-    window.print()
-  }
-
-  const handleDownloadPDF = async () => {
-    try {
-      toast({
-        title: 'PDF 생성 중...',
-        description: '잠시만 기다려주세요.',
-      })
-
-      const element = document.getElementById('result-content')
-      if (!element) {
-        throw new Error('결과 페이지를 찾을 수 없습니다.')
-      }
-
-      window.scrollTo(0, 0)
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-        scrollY: -window.scrollY,
-        scrollX: -window.scrollX,
-        imageTimeout: 15000,
-        onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('result-content')
-          if (clonedElement) {
-            clonedElement.style.fontFamily = 'system-ui, -apple-system, sans-serif'
-
-            // 그라데이션 텍스트를 일반 텍스트로
-            const gradientTexts = clonedElement.querySelectorAll('.text-gradient')
-            gradientTexts.forEach((el: Element) => {
-              const htmlEl = el as HTMLElement
-              htmlEl.style.background = 'none'
-              htmlEl.style.color = '#5b21b6'
-              htmlEl.style.webkitBackgroundClip = 'unset'
-              htmlEl.style.backgroundClip = 'unset'
-            })
-
-            // glass 효과를 흰색 배경으로
-            const glassElements = clonedElement.querySelectorAll('.glass')
-            glassElements.forEach((el: Element) => {
-              const htmlEl = el as HTMLElement
-              htmlEl.style.background = 'white'
-              htmlEl.style.backdropFilter = 'none'
-              htmlEl.style.border = '1px solid #e5e7eb'
-            })
-          }
-        }
-      })
-
-      const imgData = canvas.toDataURL('image/png', 0.95)
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-        compress: true,
-      })
-
-      const pdfWidth = 210
-      const pdfHeight = 297
-      const imgWidth = pdfWidth
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width
-
-      let heightLeft = imgHeight
-      let position = 0
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST')
-      heightLeft -= pdfHeight
-
-      while (heightLeft > 0) {
-        position -= pdfHeight
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST')
-        heightLeft -= pdfHeight
-      }
-
-      const fileName = `면접결과_${new Date().toLocaleDateString('ko-KR').replace(/\./g, '-').replace(/ /g, '')}.pdf`
-      pdf.save(fileName)
-
-      toast({
-        title: 'PDF 다운로드 완료',
-        description: '면접 결과가 저장되었습니다.',
-      })
-    } catch (error) {
-      console.error('PDF 생성 실패:', error)
-      toast({
-        variant: 'destructive',
-        title: 'PDF 생성 실패',
-        description: '다시 시도해주세요.',
-      })
-    }
+    toast({
+      title: '인쇄 창을 엽니다',
+      description: 'PDF로 저장하려면 프린터를 "PDF로 저장"으로 선택하세요.',
+    })
+    setTimeout(() => {
+      window.print()
+    }, 300)
   }
 
   const handleShare = async () => {
@@ -159,14 +68,14 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
   return (
     <div className="space-y-4">
-      {/* 인쇄/PDF 다운로드 및 공유하기 */}
+      {/* 인쇄/PDF 저장 및 공유하기 */}
       <div className="grid sm:grid-cols-2 gap-4">
         <Button
-          onClick={handleDownloadPDF}
+          onClick={handlePrint}
           className="rounded-2xl py-7 text-base sm:text-lg shadow-soft hover:shadow-glow transition-all"
         >
           <Printer className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-          인쇄 / PDF 다운로드
+          인쇄 / PDF 저장
         </Button>
         <Button
           onClick={handleShare}
@@ -180,7 +89,7 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
       {/* 안내 메시지 */}
       <div className="bg-blue-50/50 border border-blue-200/50 rounded-xl p-3 text-sm text-blue-800">
-        💡 <strong>팁:</strong> PDF 다운로드 후 파일을 열어서 인쇄하실 수 있습니다.
+        💡 <strong>팁:</strong> 인쇄 창에서 &quot;PDF로 저장&quot;을 선택하면 PDF 파일로 저장할 수 있습니다.
       </div>
     </div>
   )
