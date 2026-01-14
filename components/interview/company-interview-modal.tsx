@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Building2, ChevronRight, Briefcase } from 'lucide-react'
+import { Building2, ChevronRight, Briefcase, Loader2 } from 'lucide-react'
 import type { Company } from '@/types/database.types'
 
 interface Question {
@@ -17,6 +16,8 @@ interface Question {
   category: string
   title: string
   order: number
+  evaluation_context?: string | null
+  company_id?: string | null
 }
 
 interface CompanyInterviewModalProps {
@@ -124,23 +125,22 @@ export function CompanyInterviewModal({
       sales: '영업',
       hr: '인사',
       finance: '재무/회계',
+      engineer: 'SW/엔지니어',
+      operations: '물류/운영',
+      production: '생산/품질',
       custom: '기타',
     }
     return labels[category] || category
   }
 
-  const getCategoryColor = (category: string) => {
-    return category === 'bigtech'
-      ? 'bg-blue-100 text-blue-700'
-      : 'bg-purple-100 text-purple-700'
-  }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto bg-white/95 backdrop-blur-xl border-gray-200/50 rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
+          <DialogTitle className="flex items-center gap-2 text-gray-900">
+            <div className="w-8 h-8 rounded-xl bg-[#0071e3] flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-white" />
+            </div>
             {step === 'company' ? '기업 선택' : `${selectedCompany?.name} 면접`}
           </DialogTitle>
         </DialogHeader>
@@ -148,20 +148,20 @@ export function CompanyInterviewModal({
         {/* 회사 선택 단계 */}
         {step === 'company' && (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-500">
               면접을 준비할 기업을 선택하세요
             </p>
 
             {isLoading ? (
               <div className="space-y-2">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Skeleton key={i} className="h-14 w-full" />
+                  <Skeleton key={i} className="h-14 w-full bg-gray-100 rounded-xl" />
                 ))}
               </div>
             ) : (
               <div className="space-y-2">
                 {/* 빅테크/IT */}
-                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                   빅테크 / IT
                 </div>
                 {companies
@@ -170,27 +170,38 @@ export function CompanyInterviewModal({
                     <button
                       key={company.id}
                       onClick={() => handleSelectCompany(company)}
-                      className="w-full flex items-center justify-between p-3 rounded-xl border hover:border-primary hover:bg-primary/5 transition-all group"
+                      className="w-full flex items-center justify-between p-3 rounded-2xl border border-gray-200 hover:border-[#0071e3] hover:bg-blue-50/50 transition-all group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <span className="text-lg font-bold text-gray-500">
+                        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                          {company.logo_url ? (
+                            <img
+                              src={company.logo_url}
+                              alt={company.name}
+                              className="w-6 h-6 object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                              }}
+                            />
+                          ) : null}
+                          <span className={`text-lg font-bold text-gray-500 ${company.logo_url ? 'hidden' : ''}`}>
                             {company.name.charAt(0)}
                           </span>
                         </div>
                         <div className="text-left">
-                          <p className="font-medium">{company.name}</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="font-medium text-gray-900">{company.name}</p>
+                          <p className="text-xs text-gray-500">
                             {company.question_count}개 질문
                           </p>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#0071e3] transition-colors" />
                     </button>
                   ))}
 
                 {/* 대기업 */}
-                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-4">
+                <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 mt-4">
                   대기업
                 </div>
                 {companies
@@ -199,22 +210,33 @@ export function CompanyInterviewModal({
                     <button
                       key={company.id}
                       onClick={() => handleSelectCompany(company)}
-                      className="w-full flex items-center justify-between p-3 rounded-xl border hover:border-primary hover:bg-primary/5 transition-all group"
+                      className="w-full flex items-center justify-between p-3 rounded-2xl border border-gray-200 hover:border-[#0071e3] hover:bg-blue-50/50 transition-all group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <span className="text-lg font-bold text-gray-500">
+                        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                          {company.logo_url ? (
+                            <img
+                              src={company.logo_url}
+                              alt={company.name}
+                              className="w-6 h-6 object-contain"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                              }}
+                            />
+                          ) : null}
+                          <span className={`text-lg font-bold text-gray-500 ${company.logo_url ? 'hidden' : ''}`}>
                             {company.name.charAt(0)}
                           </span>
                         </div>
                         <div className="text-left">
-                          <p className="font-medium">{company.name}</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="font-medium text-gray-900">{company.name}</p>
+                          <p className="text-xs text-gray-500">
                             {company.question_count}개 질문
                           </p>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#0071e3] transition-colors" />
                     </button>
                   ))}
               </div>
@@ -227,33 +249,41 @@ export function CompanyInterviewModal({
           <div className="space-y-4">
             <button
               onClick={() => setStep('company')}
-              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1"
+              className="text-sm text-gray-500 hover:text-[#0071e3] flex items-center gap-1 transition-colors"
             >
               ← 다른 기업 선택
             </button>
 
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/5 border border-primary/20">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <span className="text-xl font-bold text-gray-500">
-                  {selectedCompany.name.charAt(0)}
-                </span>
+            <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
+              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                {selectedCompany.logo_url ? (
+                  <img
+                    src={selectedCompany.logo_url}
+                    alt={selectedCompany.name}
+                    className="w-8 h-8 object-contain"
+                  />
+                ) : (
+                  <span className="text-xl font-bold text-gray-500">
+                    {selectedCompany.name.charAt(0)}
+                  </span>
+                )}
               </div>
               <div>
-                <p className="font-semibold">{selectedCompany.name}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="font-semibold text-gray-900">{selectedCompany.name}</p>
+                <p className="text-sm text-gray-500">
                   {selectedCompany.description}
                 </p>
               </div>
             </div>
 
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-500">
               면접 유형을 선택하고 바로 시작하세요
             </p>
 
             {isLoading ? (
               <div className="space-y-2">
                 {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-16 w-full" />
+                  <Skeleton key={i} className="h-16 w-full bg-gray-100 rounded-xl" />
                 ))}
               </div>
             ) : (
@@ -262,22 +292,32 @@ export function CompanyInterviewModal({
                 <button
                   onClick={() => handleSelectCategory('general')}
                   disabled={isStarting}
-                  className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-primary bg-primary/5 hover:bg-primary/10 transition-all group"
+                  className="w-full flex items-center justify-between p-4 rounded-2xl border-2 border-[#0071e3] bg-blue-50/50 hover:bg-blue-50 transition-all group disabled:opacity-50"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Briefcase className="w-5 h-5 text-primary" />
+                    <div className="w-10 h-10 rounded-xl bg-[#0071e3]/10 flex items-center justify-center">
+                      <Briefcase className="w-5 h-5 text-[#0071e3]" />
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold">전체 면접</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="font-semibold text-gray-900">전체 면접</p>
+                      <p className="text-xs text-gray-500">
                         {selectedCompany.question_count}개 질문으로 종합 면접
                       </p>
                     </div>
                   </div>
-                  <Button size="sm" disabled={isStarting}>
-                    {isStarting ? '준비 중...' : '바로 면접 보기'}
-                  </Button>
+                  <button
+                    disabled={isStarting}
+                    className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-4 py-2 text-sm font-medium transition-all disabled:opacity-50"
+                  >
+                    {isStarting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        준비 중...
+                      </>
+                    ) : (
+                      '바로 면접 보기'
+                    )}
+                  </button>
                 </button>
 
                 {/* 카테고리별 (추후 확장) */}
@@ -286,22 +326,25 @@ export function CompanyInterviewModal({
                     key={category}
                     onClick={() => handleSelectCategory(category)}
                     disabled={isStarting}
-                    className="w-full flex items-center justify-between p-4 rounded-xl border hover:border-primary hover:bg-primary/5 transition-all group"
+                    className="w-full flex items-center justify-between p-4 rounded-2xl border border-gray-200 hover:border-[#0071e3] hover:bg-blue-50/50 transition-all group disabled:opacity-50"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                        <Briefcase className="w-5 h-5 text-muted-foreground" />
+                      <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                        <Briefcase className="w-5 h-5 text-gray-500" />
                       </div>
                       <div className="text-left">
-                        <p className="font-medium">{getCategoryLabel(category)}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium text-gray-900">{getCategoryLabel(category)}</p>
+                        <p className="text-xs text-gray-500">
                           {category} 직군 면접
                         </p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" disabled={isStarting}>
+                    <button
+                      disabled={isStarting}
+                      className="inline-flex items-center justify-center bg-white text-[#0071e3] hover:bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm font-medium transition-all disabled:opacity-50"
+                    >
                       면접 보기
-                    </Button>
+                    </button>
                   </button>
                 ))}
               </div>

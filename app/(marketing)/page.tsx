@@ -2,6 +2,8 @@ import { GoogleSignInButton } from '@/components/auth/google-sign-in-button'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
+import { ChevronRight, Play } from 'lucide-react'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'AI 면접 코치 - 실전 같은 AI 면접 연습',
@@ -43,61 +45,136 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 lg:p-12">
-      <div className="w-full max-w-6xl mx-auto px-2 sm:px-4">
+    <div className="flex flex-col min-h-screen bg-[#F5F5F7] text-[#1d1d1f]">
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full z-50 bg-[#F5F5F7]/80 backdrop-blur-md border-b border-gray-200/50 transition-all duration-300">
+        <div className="max-w-[980px] mx-auto px-4 h-12 flex items-center justify-between text-[12px]">
+          <div className="font-semibold tracking-tight cursor-pointer">AI 면접 코치</div>
+          <div className="flex gap-6 items-center">
+            <span className="cursor-pointer hover:text-[#0071e3] transition-colors text-gray-500 hidden sm:inline">소개</span>
+            <span className="cursor-pointer hover:text-[#0071e3] transition-colors text-gray-500 hidden sm:inline">기능</span>
+            <GoogleSignInButton variant="compact" />
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="flex-grow pt-24 pb-20 px-4 md:px-0">
+
         {/* Hero Section */}
-        <div className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 animate-fade-in">
-          <div className="space-y-4 sm:space-y-6">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-tight px-2">
-              <span className="text-gradient">AI 면접 코치</span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed px-4">
-              실전과 같은 AI 면접 경험으로
-              <br className="hidden sm:block" />
-              <span className="sm:hidden"> </span>
-              취업 합격률을 높이세요
-            </p>
-          </div>
+        <div className="max-w-[980px] mx-auto text-center animate-fade-in mb-24">
+          <h2 className="text-[#F56300] font-semibold text-lg md:text-xl mb-3">New</h2>
+          <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter text-[#1d1d1f] mb-4 leading-[1.05]">
+            AI 면접 코치.
+          </h1>
+          <p className="text-2xl md:text-3xl font-medium text-[#1d1d1f] tracking-tight mb-8">
+            합격을 위한 실전 연습.
+          </p>
 
-          {/* Auth Section */}
-          <div className="pt-6 flex flex-col gap-5 items-center justify-center max-w-md mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8">
             <GoogleSignInButton />
+            <button className="text-[#0066cc] hover:underline flex items-center text-[17px] group">
+              자세히 알아보기 <ChevronRight size={16} className="ml-1 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+
+          {/* Hero Graphic: Interview Chat Mock */}
+          <div className="mt-16 mx-auto max-w-2xl h-64 md:h-96 bg-white rounded-t-[40px] shadow-2xl border border-gray-200 overflow-hidden relative">
+            <div className="absolute top-0 w-full h-8 bg-gray-100 border-b border-gray-200 flex items-center px-4 gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+            </div>
+            <div className="p-8 flex flex-col items-center justify-center h-full space-y-4">
+              <div className="w-3/4 h-12 bg-gray-100 rounded-2xl rounded-tl-none self-start animate-pulse"></div>
+              <div className="w-1/2 h-12 bg-[#0071e3] rounded-2xl rounded-br-none self-end opacity-90"></div>
+              <div className="w-2/3 h-12 bg-gray-100 rounded-2xl rounded-tl-none self-start delay-75 animate-pulse"></div>
+            </div>
+            <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-white to-transparent"></div>
           </div>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <div className="glass rounded-3xl p-8 hover-lift space-y-4 group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
-              🎯
-            </div>
-            <h3 className="text-xl font-semibold">실전 같은 면접</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              AI가 실제 면접관처럼 질문하고 피드백을 제공합니다
-            </p>
-          </div>
+        {/* Bento Box Feature Grid */}
+        <div className="max-w-[980px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <div className="glass rounded-3xl p-8 hover-lift space-y-4 group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
-              📊
+            {/* Card 1: AI 면접 시뮬레이션 */}
+            <div className="bg-white rounded-[30px] p-8 md:p-12 overflow-hidden relative group hover:shadow-xl transition-all duration-500 border border-gray-100/50">
+              <div className="relative z-10">
+                <h3 className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider mb-2">시뮬레이션</h3>
+                <h4 className="text-3xl md:text-4xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">실전 같은 면접.<br/>실제 기업 질문.</h4>
+                <p className="text-lg text-gray-500 font-medium leading-relaxed max-w-sm">
+                  네이버, 카카오, 삼성 등 실제 기업의 면접 질문으로
+                  실전처럼 연습하세요.
+                </p>
+              </div>
+              {/* Visual: Audio Waveform */}
+              <div className="mt-12 flex items-center justify-center gap-1.5 h-24 opacity-60 group-hover:opacity-100 transition-opacity">
+                {[...Array(12)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-3 bg-[#0071e3] rounded-full animate-pulse"
+                    style={{
+                      height: `${Math.random() * 60 + 20}%`,
+                      animationDelay: `${i * 0.1}s`
+                    }}
+                  ></div>
+                ))}
+              </div>
             </div>
-            <h3 className="text-xl font-semibold">정밀한 분석</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              답변의 구조, 논리성, 진정성을 AI가 상세히 분석합니다
-            </p>
-          </div>
 
-          <div className="glass rounded-3xl p-8 hover-lift space-y-4 group">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:shadow-xl transition-shadow">
-              ⚡
+            {/* Card 2: Analytics */}
+            <div className="bg-white rounded-[30px] p-8 md:p-10 overflow-hidden relative group hover:shadow-xl transition-all duration-500 border border-gray-100/50 min-h-[400px]">
+              <div className="relative z-10">
+                <h3 className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider mb-2">분석</h3>
+                <h4 className="text-3xl font-semibold text-[#1d1d1f] mb-3 tracking-tight">정밀한 AI 분석.</h4>
+                <p className="text-md text-gray-500 font-medium leading-relaxed">
+                  논리성, 구체성, 진정성을 AI가 상세히 분석합니다.
+                </p>
+              </div>
+              {/* Visual: Charts */}
+              <div className="absolute bottom-8 right-8 left-8">
+                <div className="flex items-end justify-between h-32 gap-4">
+                  <div className="w-full bg-gray-100 rounded-t-lg h-[40%] group-hover:h-[50%] transition-all duration-700"></div>
+                  <div className="w-full bg-gray-200 rounded-t-lg h-[60%] group-hover:h-[75%] transition-all duration-700 delay-75"></div>
+                  <div className="w-full bg-[#1d1d1f] rounded-t-lg h-[80%] group-hover:h-[95%] transition-all duration-700 delay-150 relative">
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">98점</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold">즉시 개선</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              면접 직후 개선점을 확인하고 바로 재도전할 수 있습니다
-            </p>
+
+            {/* Card 3: Instant Feedback (Dark) */}
+            <div className="md:col-span-2 bg-black rounded-[30px] p-8 md:p-12 overflow-hidden relative group text-white">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                <div className="max-w-md">
+                  <h3 className="text-[12px] font-semibold text-gray-400 uppercase tracking-wider mb-2">즉시 피드백</h3>
+                  <h4 className="text-3xl md:text-4xl font-semibold mb-4 tracking-tight">
+                    연습하고, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">바로 개선</span>하세요.
+                  </h4>
+                  <p className="text-lg text-gray-400 font-medium leading-relaxed">
+                    면접 직후 AI가 STAR 기법 기반의 개선점을 즉시 제공합니다.
+                    반복 연습으로 합격에 가까워지세요.
+                  </p>
+                </div>
+                <div className="flex-shrink-0">
+                  <GoogleSignInButton variant="dark" />
+                </div>
+              </div>
+              {/* Visual: Dark Mode Glow */}
+              <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+            </div>
+
           </div>
         </div>
-      </div>
+
+        {/* Footer / Trusted Text */}
+        <div className="max-w-[980px] mx-auto mt-24 text-center border-t border-gray-200 pt-12">
+          <p className="text-[12px] text-gray-400 font-medium">
+            네이버, 카카오, 삼성 등 주요 기업 면접 합격자들이 사용합니다.
+          </p>
+        </div>
+      </main>
     </div>
   )
 }

@@ -19,6 +19,8 @@ interface Question {
   category: string
   title: string
   order: number
+  evaluation_context?: string | null
+  company_id?: string | null
 }
 
 interface Answer {
@@ -458,33 +460,29 @@ export default function InterviewPage() {
   // 질문 선택 화면
   if (mode === 'question-select' && !interviewStarted) {
     return (
-      <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
-        <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-6 md:space-y-8">
+      <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6 lg:p-12">
+        <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
           {/* Header */}
-          <div className="flex items-center justify-between animate-fade-in">
+          <div className="flex items-center justify-between">
             <Link href="/dashboard">
-              <Button
-                variant="outline"
-                className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base"
-              >
-                <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">대시보드</span>
-                <span className="sm:hidden">뒤로</span>
-              </Button>
+              <button className="inline-flex items-center justify-center bg-white text-gray-700 hover:bg-gray-50 border border-gray-200/50 rounded-full px-4 py-2 text-[14px] font-medium transition-all">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                대시보드
+              </button>
             </Link>
           </div>
 
           {/* Title */}
-          <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-soft">
+          <div className="glass-card rounded-3xl p-6 md:p-10">
             <div className="flex items-center space-x-4 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg">
-                <span className="text-3xl">📋</span>
+              <div className="w-14 h-14 rounded-2xl bg-[#0071e3] flex items-center justify-center text-white">
+                <span className="text-2xl">📋</span>
               </div>
               <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-                  <span className="text-gradient">질문 선택</span>
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+                  질문 선택
                 </h1>
-                <p className="text-sm sm:text-base text-muted-foreground mt-2">
+                <p className="text-sm md:text-base text-gray-500 mt-2">
                   면접에서 답변할 질문을 선택하세요 (최소 3개, 최대 10개)
                 </p>
               </div>
@@ -492,13 +490,13 @@ export default function InterviewPage() {
 
             {/* Selection Counter & Score Info */}
             <div className="mb-6 flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-primary/30">
-                <span className="text-2xl font-bold text-gradient mr-2">{selectedQuestionIds.size}</span>
-                <span className="text-sm text-muted-foreground font-medium">/ 10개 선택됨</span>
+              <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-50 border border-blue-200/50">
+                <span className="text-2xl font-bold text-[#0071e3] mr-2">{selectedQuestionIds.size}</span>
+                <span className="text-sm text-gray-500 font-medium">/ 10개 선택됨</span>
               </div>
               {selectedQuestionIds.size >= 3 && (
-                <div className="inline-flex items-center px-4 py-3 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
-                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                <div className="inline-flex items-center px-4 py-3 rounded-full bg-green-50 border border-green-200/50">
+                  <span className="text-sm font-medium text-green-700">
                     총 100점 = 문항당 <span className="font-bold">{Math.round(100 / selectedQuestionIds.size * 10) / 10}점</span>
                   </span>
                 </div>
@@ -511,13 +509,13 @@ export default function InterviewPage() {
                 {/* 기업 면접 버튼 */}
                 <button
                   onClick={() => setShowCompanyModal(true)}
-                  className="flex-1 p-4 rounded-xl border-2 border-blue-500/30 bg-gradient-to-r from-blue-500/5 to-purple-500/5 hover:from-blue-500/10 hover:to-purple-500/10 hover:border-blue-500/60 transition-all group"
+                  className="flex-1 p-4 rounded-2xl border border-blue-200/50 bg-blue-50/50 hover:bg-blue-50 hover:border-blue-300 transition-all group"
                 >
-                  <div className="flex items-center justify-center space-x-2 text-blue-600">
+                  <div className="flex items-center justify-center space-x-2 text-[#0071e3]">
                     <Building2 className="h-5 w-5 group-hover:scale-110 transition-transform" />
                     <span className="font-semibold">기업 면접 보기</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-gray-500 mt-1">
                     네이버, 삼성, 카카오 등 실제 면접 질문
                   </p>
                 </button>
@@ -526,13 +524,13 @@ export default function InterviewPage() {
                 {!showInlineForm && (
                   <button
                     onClick={() => setShowInlineForm(true)}
-                    className="flex-1 p-4 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5 transition-all group"
+                    className="flex-1 p-4 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#0071e3] hover:bg-blue-50/30 transition-all group"
                   >
-                    <div className="flex items-center justify-center space-x-2 text-primary">
+                    <div className="flex items-center justify-center space-x-2 text-[#0071e3]">
                       <Plus className="h-5 w-5 group-hover:scale-110 transition-transform" />
                       <span className="font-semibold">나만의 질문 추가하기</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-gray-500 mt-1">
                       직접 질문을 만들어 연습하세요
                     </p>
                   </button>
@@ -542,15 +540,15 @@ export default function InterviewPage() {
 
             {/* Inline Question Creation Form */}
             {showInlineForm && (
-              <div className="mb-4 p-4 rounded-xl border-2 border-primary bg-primary/5 space-y-3 animate-in slide-in-from-top-2">
+              <div className="mb-4 p-4 rounded-2xl border border-[#0071e3] bg-blue-50/50 space-y-3 animate-fade-in">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-sm">새 질문 추가</h3>
+                  <h3 className="font-semibold text-sm text-gray-900">새 질문 추가</h3>
                   <button
                     onClick={() => {
                       setShowInlineForm(false)
                       setNewQuestionTitle('')
                     }}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -565,18 +563,17 @@ export default function InterviewPage() {
                       handleCreateInlineQuestion()
                     }
                   }}
-                  className="rounded-xl"
+                  className="rounded-xl border-gray-200 focus:border-[#0071e3] focus:ring-[#0071e3]"
                   autoFocus
                 />
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-gray-500">
                     AI가 평가 기준을 자동 생성합니다. 질문을 자세히 입력해주세요. ({newQuestionTitle.length}/200)
                   </p>
-                  <Button
+                  <button
                     onClick={handleCreateInlineQuestion}
                     disabled={isCreatingQuestion || !newQuestionTitle.trim()}
-                    size="sm"
-                    className="rounded-xl"
+                    className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-4 py-2 text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isCreatingQuestion ? (
                       <>
@@ -586,7 +583,7 @@ export default function InterviewPage() {
                     ) : (
                       '추가'
                     )}
-                  </Button>
+                  </button>
                 </div>
               </div>
             )}
@@ -595,7 +592,7 @@ export default function InterviewPage() {
             {isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Skeleton key={i} className="h-16 w-full bg-muted/30" />
+                  <Skeleton key={i} className="h-16 w-full bg-gray-100 rounded-2xl" />
                 ))}
               </div>
             ) : (
@@ -615,9 +612,9 @@ export default function InterviewPage() {
                     <div key={question.id} className="relative">
                       {/* 드롭 위치 표시 가로선 */}
                       {dragOverIndex === index && draggedIndex !== null && draggedIndex !== index && dragOverIndex !== draggedIndex + 1 && (
-                        <div className="absolute -top-1 left-0 right-0 h-0.5 bg-primary z-10">
-                          <div className="absolute left-0 -top-1 w-2 h-2 rounded-full bg-primary"></div>
-                          <div className="absolute right-0 -top-1 w-2 h-2 rounded-full bg-primary"></div>
+                        <div className="absolute -top-1 left-0 right-0 h-0.5 bg-[#0071e3] z-10">
+                          <div className="absolute left-0 -top-1 w-2 h-2 rounded-full bg-[#0071e3]"></div>
+                          <div className="absolute right-0 -top-1 w-2 h-2 rounded-full bg-[#0071e3]"></div>
                         </div>
                       )}
 
@@ -627,24 +624,24 @@ export default function InterviewPage() {
                         onDragOver={(e) => handleDragOver(e, index)}
                         onDrop={(e) => handleDrop(e, index)}
                         onDragEnd={handleDragEnd}
-                        className={`w-full text-left p-4 rounded-xl border-2 transition-all cursor-move group relative ${
+                        className={`w-full text-left p-4 rounded-2xl border transition-all cursor-move group relative ${
                           isDragging
                             ? 'opacity-50'
                             : isSelected
-                            ? 'border-primary bg-primary/5 shadow-md'
-                            : 'border-muted hover:border-primary/50 hover:bg-muted/30'
+                            ? 'border-[#0071e3] bg-blue-50/50 shadow-md'
+                            : 'border-gray-200 hover:border-[#0071e3]/50 hover:bg-gray-50'
                         }`}
                       >
                       <div className="flex items-start space-x-3">
-                        <GripVertical className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing" />
+                        <GripVertical className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5 cursor-grab active:cursor-grabbing" />
                         <button
                           onClick={() => toggleQuestionSelection(question.id)}
                           className="flex items-start space-x-3 flex-1 text-left"
                         >
-                          <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                          <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
                             isSelected
-                              ? 'border-primary bg-primary'
-                              : 'border-muted-foreground/30'
+                              ? 'border-[#0071e3] bg-[#0071e3]'
+                              : 'border-gray-300'
                           }`}>
                             {isSelected && (
                               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -655,14 +652,14 @@ export default function InterviewPage() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               {isSelected && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-semibold">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 text-[#0071e3] text-xs font-semibold">
                                   질문 {selectedOrder}
                                 </span>
                               )}
-                              <p className="font-medium text-sm sm:text-base">{question.title}</p>
+                              <p className="font-medium text-sm sm:text-base text-gray-900">{question.title}</p>
                             </div>
                             {question.category && (
-                              <p className="text-xs text-muted-foreground mt-1">
+                              <p className="text-xs text-gray-500 mt-1">
                                 {question.category === 'custom' ? '커스텀 질문' : question.category}
                               </p>
                             )}
@@ -676,7 +673,7 @@ export default function InterviewPage() {
                             handleDeleteClick(question.id, question.title, question.category === 'custom')
                           }}
                           disabled={deletingQuestionId === question.id}
-                          className="absolute top-3 right-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="absolute top-3 right-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity p-1.5 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
                           aria-label={`${question.title} 삭제`}
                         >
                           {deletingQuestionId === question.id ? (
@@ -694,15 +691,15 @@ export default function InterviewPage() {
             )}
 
             {/* Start Button */}
-            <Button
+            <button
               onClick={startInterview}
               disabled={selectedQuestionIds.size < 3 || isLoading}
-              className="w-full rounded-2xl py-7 text-lg shadow-soft hover:shadow-glow transition-all"
+              className="w-full bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full py-4 text-lg font-semibold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {selectedQuestionIds.size < 3
                 ? `최소 ${3 - selectedQuestionIds.size}개 더 선택해주세요`
                 : '면접 시작하기'}
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -718,28 +715,32 @@ export default function InterviewPage() {
 
   // 면접 진행 화면
   return (
-    <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
-      <div className="container mx-auto max-w-4xl px-0 sm:px-4 space-y-2 sm:space-y-4 md:space-y-6 lg:space-y-8">
+    <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6 lg:p-12">
+      <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 animate-fade-in">
           {/* Header */}
-          <div className="flex items-center justify-between animate-fade-in gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Link href="/dashboard">
-              <Button variant="outline" className="rounded-2xl px-3 sm:px-4 md:px-6 py-2 sm:py-3 shadow-soft hover:shadow-glow transition-all text-sm sm:text-base">
-                <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+              <button className="inline-flex items-center justify-center bg-white text-gray-700 hover:bg-gray-50 border border-gray-200/50 rounded-full px-4 py-2 text-[14px] font-medium transition-all">
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 <span className="hidden sm:inline">뒤로 가기</span>
                 <span className="sm:hidden">뒤로</span>
-              </Button>
+              </button>
             </Link>
             {!isLoading && (
               <div className="flex items-center gap-2">
-                <div className="glass px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-2xl shadow-soft">
-                  <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
-                    <span className="text-gradient">{currentQuestionIndex + 1}</span>
-                    <span className="text-muted-foreground"> / {questions.length}</span>
+                <div className="glass-panel px-4 py-2 rounded-full flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                  <span className="text-xs font-semibold text-gray-600">Live</span>
+                </div>
+                <div className="glass-panel px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold whitespace-nowrap">
+                    <span className="text-[#0071e3]">{currentQuestionIndex + 1}</span>
+                    <span className="text-gray-500"> / {questions.length}</span>
                   </span>
                 </div>
-                <div className="glass px-3 sm:px-4 py-2 sm:py-3 rounded-2xl shadow-soft">
-                  <span className="text-xs sm:text-sm font-medium text-muted-foreground whitespace-nowrap">
-                    문항당 <span className="text-gradient font-bold">{Math.round(100 / questions.length * 10) / 10}점</span>
+                <div className="hidden sm:block glass-panel px-4 py-2 rounded-full">
+                  <span className="text-sm font-medium text-gray-500 whitespace-nowrap">
+                    문항당 <span className="text-[#0071e3] font-bold">{Math.round(100 / questions.length * 10) / 10}점</span>
                   </span>
                 </div>
               </div>
@@ -748,10 +749,10 @@ export default function InterviewPage() {
 
           {/* Progress Bar */}
           {!isLoading && questions.length > 0 && (
-            <div className="glass rounded-full p-1 shadow-soft">
-              <div className="h-3 bg-muted/30 rounded-full overflow-hidden">
+            <div className="glass-card rounded-full p-1">
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500 rounded-full shadow-glow"
+                  className="h-full bg-[#0071e3] transition-all duration-500 rounded-full"
                   style={{
                     width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`,
                   }}
@@ -762,24 +763,38 @@ export default function InterviewPage() {
 
           {/* Question Card */}
           {isLoading ? (
-            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
-              <Skeleton className="h-6 w-32 mb-4 bg-muted/30" />
-              <Skeleton className="h-12 w-full bg-muted/30" />
+            <div className="glass-card rounded-3xl p-6 md:p-10">
+              <Skeleton className="h-6 w-32 mb-4 bg-gray-100 rounded-xl" />
+              <Skeleton className="h-12 w-full bg-gray-100 rounded-xl" />
             </div>
           ) : currentQuestion ? (
-            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 md:p-10 lg:p-12 shadow-soft">
-              <div className="space-y-3 sm:space-y-6">
-                <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-primary/20">
-                  <span className="text-xs sm:text-sm font-semibold text-primary">질문 {currentQuestionIndex + 1}</span>
+            <div className="glass-card rounded-3xl p-6 md:p-10">
+              <div className="space-y-4 md:space-y-6">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-100">
+                  <span className="text-sm font-semibold text-[#0071e3]">질문 {currentQuestionIndex + 1}</span>
                 </div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-relaxed text-gradient break-keep">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-relaxed text-gray-900 break-keep">
                   {currentQuestion.title}
                 </h2>
-                <div className="flex items-start space-x-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
-                  <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-white text-xs font-bold">💡</span>
+                {/* 기업 판단기준 힌트 */}
+                {currentQuestion.evaluation_context && (
+                  <div className="flex items-start space-x-3 p-4 rounded-2xl bg-amber-50 border border-amber-200/50">
+                    <div className="w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white text-xs font-bold">!</span>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-amber-700 mb-1">기업 판단기준</p>
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {currentQuestion.evaluation_context}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-foreground/80 leading-relaxed">
+                )}
+                <div className="flex items-start space-x-3 p-4 rounded-2xl bg-blue-50 border border-blue-100">
+                  <div className="w-6 h-6 rounded-full bg-[#0071e3] flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-white text-xs">💡</span>
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed">
                     아래 버튼을 눌러 녹음을 시작하고, 질문에 대한 답변을 말씀해주세요.
                     답변이 끝나면 정지 버튼을 누르세요.
                   </p>
@@ -787,8 +802,8 @@ export default function InterviewPage() {
               </div>
             </div>
           ) : (
-            <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-8 shadow-soft">
-              <p className="text-center text-muted-foreground">
+            <div className="glass-card rounded-3xl p-6 md:p-10">
+              <p className="text-center text-gray-500">
                 질문을 불러올 수 없습니다.
               </p>
             </div>
@@ -805,16 +820,16 @@ export default function InterviewPage() {
 
           {/* Upload Loading */}
           {isUploading && (
-            <div className="glass rounded-none sm:rounded-3xl p-6 sm:p-8 shadow-soft animate-glow">
-              <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-glow">
-                  <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-white" />
+            <div className="glass-card rounded-3xl p-8 md:p-10">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#0071e3] flex items-center justify-center shadow-lg">
+                  <Loader2 className="h-8 w-8 animate-spin text-white" />
                 </div>
-                <div className="text-center space-y-0.5 sm:space-y-1">
-                  <p className="font-semibold text-base sm:text-lg">면접 분석 중</p>
-                  <div className="mt-3 sm:mt-4">
-                    <div className="inline-flex items-center px-4 sm:px-6 py-3 sm:py-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-2 border-primary/20 min-h-[60px] sm:min-h-[70px]">
-                      <p className="text-sm sm:text-base font-medium text-gradient animate-in fade-in duration-500">
+                <div className="text-center space-y-1">
+                  <p className="font-semibold text-lg text-gray-900">면접 분석 중</p>
+                  <div className="mt-4">
+                    <div className="inline-flex items-center px-6 py-4 rounded-2xl bg-blue-50 border border-blue-100 min-h-[70px]">
+                      <p className="text-base font-medium text-[#0071e3] animate-fade-in">
                         {analyzingMessages[currentMessageIndex]}
                       </p>
                     </div>
@@ -825,29 +840,29 @@ export default function InterviewPage() {
           )}
 
           {/* Instructions */}
-          <div className="glass rounded-none sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-soft">
-            <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-6">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
-                <span className="text-xl sm:text-2xl">💡</span>
+          <div className="glass-card rounded-3xl p-6 md:p-8">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <span className="text-xl">💡</span>
               </div>
-              <h3 className="text-base sm:text-lg md:text-xl font-bold">면접 팁</h3>
+              <h3 className="text-lg font-bold text-gray-900">면접 팁</h3>
             </div>
-            <ul className="space-y-2 sm:space-y-3">
-              <li className="flex items-start space-x-2 sm:space-x-3">
-                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary mt-1.5 sm:mt-2 flex-shrink-0" />
-                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
-                  <span className="font-semibold text-primary">STAR 기법</span>을 활용하세요
+            <ul className="space-y-3">
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#0071e3] mt-2 flex-shrink-0" />
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  <span className="font-semibold text-[#0071e3]">STAR 기법</span>을 활용하세요
                 </p>
               </li>
-              <li className="flex items-start space-x-2 sm:space-x-3">
-                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary mt-1.5 sm:mt-2 flex-shrink-0" />
-                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#0071e3] mt-2 flex-shrink-0" />
+                <p className="text-sm text-gray-600 leading-relaxed">
                   구체적인 사례와 수치를 포함하세요
                 </p>
               </li>
-              <li className="flex items-start space-x-2 sm:space-x-3">
-                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-primary mt-1.5 sm:mt-2 flex-shrink-0" />
-                <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
+              <li className="flex items-start space-x-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#0071e3] mt-2 flex-shrink-0" />
+                <p className="text-sm text-gray-600 leading-relaxed">
                   명확하고 자신감 있게 답변하세요
                 </p>
               </li>

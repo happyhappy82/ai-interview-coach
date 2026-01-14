@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,68 +6,38 @@
 
 @layer base {
   :root {
-    /* Apple/OpenAI Inspired Clean Design System */
-    --background: 0 0% 98%;
-    --foreground: 240 10% 3.9%;
+    /* Apple/interview-pro Inspired Design System */
+    --background: 0 0% 96.5%; /* #F5F5F7 */
+    --foreground: 0 0% 11%; /* #1d1d1f */
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 11%;
 
-    /* Primary: Elegant Blue (#3B82F6) */
-    --primary: 217 91% 60%;
+    /* Primary: Apple Blue (#0071e3) */
+    --primary: 211 100% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Ultra Light Gray */
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    /* Secondary: Light Gray */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 11%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 11%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 217 91% 60%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 211 100% 45%;
 
     --radius: 1rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 239 84% 67%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 239 84% 67%;
   }
 }
 
@@ -78,12 +48,88 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    background-color: #F5F5F7;
   }
 }
 
+/* Custom scrollbar for webkit */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
 @layer utilities {
-  /* Apple/OpenAI Shadow System */
+  /* Glass-morphism Effects */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Legacy glass support */
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20;
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Hover Effects */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  /* Text Gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
+  }
+
+  /* Apple Blue Button */
+  .btn-apple {
+    @apply bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full font-medium transition-all duration-300 active:scale-95;
+  }
+
+  .btn-apple-secondary {
+    @apply bg-white text-[#0071e3] hover:bg-gray-50 border border-gray-200/50 rounded-full font-medium transition-all duration-300 active:scale-95;
+  }
+
+  /* Shadow System */
+  .shadow-soft {
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.05);
+  }
+
   .shadow-premium {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05),
                 0 1px 2px -1px rgba(0, 0, 0, 0.05);
@@ -98,50 +144,10 @@
     box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.12),
                 0 12px 18px -8px rgba(0, 0, 0, 0.06);
   }
-
-  /* Glassmorphism Effect */
-  .glass {
-    @apply bg-white/70 backdrop-blur-xl border border-white/20;
-  }
-
-  .glass-dark {
-    @apply bg-black/20 backdrop-blur-xl border border-white/10;
-  }
-
-  /* Gradient Backgrounds */
-  .gradient-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  .gradient-mesh {
-    background-color: hsl(var(--background));
-    background-image:
-      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.12) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
-    background-attachment: fixed;
-    background-size: 100% 100%;
-  }
-
-  /* Clean animations */
-  .transition-smooth {
-    @apply transition-all duration-300 ease-in-out;
-  }
-
-  .hover-lift {
-    @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-premium-lg;
-  }
-
-  /* Text Gradients */
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
-  }
 }
 
 /* PDF/Print 최적화 */
 @media print {
-  /* 브라우저 기본 색상 출력 강제 */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -155,107 +161,20 @@
     padding: 0 !important;
   }
 
-  .gradient-mesh {
-    background: white !important;
-    background-image: none !important;
-  }
-
-  /* 컨테이너 패딩 최소화 */
-  .container,
-  [class*="container"] {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-  }
-
-  /* 최상위 div 패딩 제거 */
-  .min-h-screen {
-    padding: 4mm !important;
-    min-height: auto !important;
-  }
-
-  /* 모든 섹션 패딩 줄이기 */
-  .glass,
-  [class*="p-4"],
-  [class*="p-6"],
-  [class*="p-8"],
-  [class*="p-10"],
-  [class*="p-12"] {
-    padding: 4mm !important;
-  }
-
-  /* 간격 줄이기 */
-  [class*="space-y"] {
-    gap: 3mm !important;
-  }
-
-  [class*="mb-6"],
-  [class*="mb-8"] {
-    margin-bottom: 3mm !important;
-  }
-
-  /* 글자 크기 조정 */
-  h1, .text-3xl, .text-4xl, .text-5xl, .text-6xl {
-    font-size: 20pt !important;
-    line-height: 1.3 !important;
-  }
-
-  h2, .text-2xl {
-    font-size: 16pt !important;
-    line-height: 1.3 !important;
-  }
-
-  h3, .text-xl {
-    font-size: 14pt !important;
-    line-height: 1.3 !important;
-  }
-
-  p, .text-sm, .text-base {
-    font-size: 10pt !important;
-    line-height: 1.4 !important;
-  }
-
-  .text-xs {
-    font-size: 9pt !important;
-  }
-
-  /* 아이콘 크기 줄이기 */
-  [class*="w-12"],
-  [class*="h-12"],
-  [class*="w-14"],
-  [class*="h-14"],
-  [class*="w-16"],
-  [class*="h-16"] {
-    width: 8mm !important;
-    height: 8mm !important;
-  }
-
-  [class*="w-8"],
-  [class*="h-8"],
-  [class*="w-10"],
-  [class*="h-10"] {
-    width: 6mm !important;
-    height: 6mm !important;
-  }
-
-  /* 점수 박스 크기 */
-  .text-4xl,
-  .text-5xl,
-  .text-6xl {
-    font-size: 24pt !important;
-  }
-
   /* 불필요한 요소 숨기기 */
   button,
+  nav,
   .no-print {
     display: none !important;
   }
 
-  /* 페이지 나누기 최적화 */
+  /* Glass 효과를 흰색 배경으로 */
   .glass,
-  .card {
-    page-break-inside: avoid;
-    break-inside: avoid;
+  .glass-panel,
+  .glass-card {
+    background: white !important;
+    backdrop-filter: none !important;
+    border: 1px solid #e5e7eb !important;
   }
 
   /* 그라데이션 텍스트를 일반 텍스트로 */
@@ -264,98 +183,5 @@
     color: #5b21b6 !important;
     -webkit-background-clip: unset !important;
     background-clip: unset !important;
-  }
-
-  /* Glass 효과를 흰색 배경으로 */
-  .glass {
-    background: white !important;
-    backdrop-filter: none !important;
-    border: 1px solid #e5e7eb !important;
-  }
-
-  /* 그라데이션 배경을 단색으로 변환 */
-  [class*="bg-gradient"] {
-    background-image: none !important;
-  }
-
-  /* 점수 박스 - 보라색 배경 강제 */
-  [class*="from-blue-500"][class*="to-purple-500"] {
-    background: #7c3aed !important;
-    background-image: none !important;
-  }
-
-  /* 아이콘 박스 배경색 강제 적용 */
-  [class*="from-green-500"] {
-    background: #10b981 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-orange-500"] {
-    background: #f97316 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-indigo-500"] {
-    background: #6366f1 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-rose-500"] {
-    background: #f43f5e !important;
-    background-image: none !important;
-  }
-
-  [class*="from-blue-400"][class*="to-blue-500"] {
-    background: #3b82f6 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-amber-400"] {
-    background: #fbbf24 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-purple-500"] {
-    background: #a855f7 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-pink-500"] {
-    background: #ec4899 !important;
-    background-image: none !important;
-  }
-
-  /* 흰색 텍스트 유지 */
-  [class*="text-white"] {
-    color: white !important;
-  }
-
-  /* Shadow 제거하고 border로 대체 */
-  [class*="shadow"] {
-    box-shadow: none !important;
-    border: 1px solid #e5e7eb !important;
-  }
-
-  /* 키워드 배지 색상 */
-  [class*="from-blue-500/10"] {
-    background: #dbeafe !important;
-    background-image: none !important;
-    border: 1px solid #3b82f6 !important;
-  }
-
-  /* 번호 박스 배경색 */
-  [class*="from-green-100"] {
-    background: #d1fae5 !important;
-    background-image: none !important;
-  }
-
-  [class*="from-orange-100"] {
-    background: #fed7aa !important;
-    background-image: none !important;
-  }
-
-  [class*="from-rose-100"] {
-    background: #ffe4e6 !important;
-    background-image: none !important;
   }
 }

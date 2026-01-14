@@ -1,9 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
-import { BarChart3, FileText, Clock, TrendingUp } from 'lucide-react'
-import { DashboardGuideButton } from '@/components/dashboard/dashboard-guide-button'
+import { Play, FileText, TrendingUp, Calendar, ChevronRight } from 'lucide-react'
 
 export default async function UserDashboard() {
   const supabase = await createClient()
@@ -18,6 +15,22 @@ export default async function UserDashboard() {
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user!.id)
 
+  // 평균 점수 계산
+  const { data: allResults } = await supabase
+    .from('interview_results')
+    .select('ai_feedback')
+    .eq('user_id', user!.id)
+
+  let averageScore = 0
+  if (allResults && allResults.length > 0) {
+    const scores = allResults
+      .map((r) => (r.ai_feedback as { score?: number })?.score)
+      .filter((s): s is number => typeof s === 'number')
+    if (scores.length > 0) {
+      averageScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+    }
+  }
+
   // 과거 면접 기록 가져오기 (최신 10개)
   const { data: interviewHistory } = await supabase
     .from('interview_results')
@@ -27,104 +40,123 @@ export default async function UserDashboard() {
     .limit(10)
 
   return (
-    <div className="min-h-screen p-1 sm:p-4 md:p-6 lg:p-12">
-      <div className="max-w-7xl mx-auto px-0 sm:px-4 space-y-2 sm:space-y-6 md:space-y-8">
+    <div className="min-h-screen bg-[#F5F5F7] pt-8 pb-12 px-4 md:px-6">
+      <div className="max-w-5xl mx-auto space-y-8 animate-fade-in">
+
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-in">
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              <span className="text-gradient">대시보드</span>
-            </h1>
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-light break-all">
-              안녕하세요, <span className="font-medium text-foreground">{user?.email}</span>님
-            </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">대시보드</h1>
+            <p className="text-gray-500 mt-1">환영합니다, {user?.email}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <DashboardGuideButton />
+          <div className="flex gap-3">
+            <Link href="/expert">
+              <button className="inline-flex items-center justify-center bg-white text-[#0071e3] hover:bg-gray-50 border border-gray-200/50 rounded-full px-4 py-2 text-[14px] font-medium transition-all">
+                전문가 상담
+              </button>
+            </Link>
             <form action="/api/auth/signout" method="post">
-              <Button variant="outline" type="submit" className="px-6 py-3 transition-all">
+              <button type="submit" className="inline-flex items-center justify-center text-gray-500 hover:text-[#0071e3] rounded-lg px-3 py-2 text-[14px] font-medium transition-colors">
                 로그아웃
-              </Button>
+              </button>
             </form>
           </div>
         </div>
 
-        {/* Stats */}
-        {totalInterviews !== null && totalInterviews > 0 && (
-          <div className="glass p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-soft hover-lift">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
-                  <BarChart3 className="h-7 w-7" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold">나의 면접 통계</h3>
-                  <p className="text-muted-foreground text-sm">성장하는 여정을 확인하세요</p>
-                </div>
+        {/* Stats Row */}
+        <div className="glass-card rounded-3xl overflow-hidden">
+          <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-blue-50/50 to-transparent">
+            <div className="flex items-center gap-3">
+              <div className="bg-[#0071e3] p-2.5 rounded-xl text-white">
+                <TrendingUp size={20} />
               </div>
-              <div className="text-right">
-                <p className="text-5xl font-bold text-gradient">{totalInterviews}</p>
-                <p className="text-sm text-muted-foreground mt-1">총 면접 횟수</p>
+              <div>
+                <h3 className="font-semibold text-gray-900">나의 성장</h3>
+                <p className="text-sm text-gray-500">면접 연습 현황</p>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Main Actions */}
-        <div className="grid gap-2 sm:gap-6 md:grid-cols-2">
-          <div className="glass p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-soft hover:shadow-glow hover-lift group">
-            <div className="space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
-                🎯
-              </div>
-              <div className="space-y-3">
-                <h3 className="text-2xl font-bold">면접 시작하기</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  질문을 선택하고 AI와 실전 같은 모의 면접을 진행하세요
-                </p>
-              </div>
-              <Link href="/interview" className="block">
-                <Button className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all">
-                  면접 시작
-                </Button>
-              </Link>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-gray-900">{totalInterviews || 0}</span>
+              <span className="text-sm text-gray-500 ml-1">회 연습</span>
             </div>
           </div>
-
-          <div className="glass p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-soft hover:shadow-glow hover-lift group">
-            <div className="space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-white text-3xl shadow-lg group-hover:shadow-xl transition-shadow">
-                📊
-              </div>
-              <div className="space-y-3">
-                <h3 className="text-2xl font-bold">내 결과 보기</h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  이전 면접 결과와 AI 분석을 확인하세요
-                </p>
-              </div>
-              <Link href="/result" className="block">
-                <Button variant="outline" className="w-full rounded-2xl py-6 text-lg shadow-soft hover:shadow-glow transition-all">
-                  최신 결과 확인
-                </Button>
-              </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+            <div className="p-6 text-center hover:bg-gray-50 transition-colors">
+              <p className="text-sm text-gray-500 mb-1">평균 점수</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {averageScore || '-'}
+                <span className="text-sm text-gray-400 font-normal">/100</span>
+              </p>
+            </div>
+            <div className="p-6 text-center hover:bg-gray-50 transition-colors">
+              <p className="text-sm text-gray-500 mb-1">총 면접 횟수</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {totalInterviews || 0}
+                <span className="text-sm text-gray-400 font-normal">회</span>
+              </p>
+            </div>
+            <div className="p-6 text-center hover:bg-gray-50 transition-colors">
+              <p className="text-sm text-gray-500 mb-1">상태</p>
+              <p className="text-lg font-semibold text-green-600">
+                {totalInterviews && totalInterviews >= 5 ? '꾸준히 성장 중' : '시작하기'}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Interview History */}
-        {interviewHistory && interviewHistory.length > 0 && (
-          <div className="glass p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-soft">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
-                <FileText className="h-6 w-6" />
-              </div>
+        {/* Main Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Link href="/interview" className="block">
+            <div className="glass-card rounded-3xl p-6 flex flex-col justify-between min-h-[240px] group cursor-pointer hover:border-blue-200 transition-all relative overflow-hidden hover:-translate-y-1 hover:shadow-xl duration-300">
+              {/* Abstract shape decoration */}
+              <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all"></div>
+
               <div>
-                <h3 className="text-2xl font-bold">면접 기록</h3>
-                <p className="text-sm text-muted-foreground">과거에 진행했던 면접 결과를 확인하세요</p>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-[#0071e3] mb-4">
+                  <Play size={24} fill="currentColor" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">면접 시작하기</h3>
+                <p className="text-gray-500 mt-2 max-w-sm">
+                  AI와 실전 같은 모의 면접을 시작하세요. 기업별 질문을 선택할 수 있습니다.
+                </p>
+              </div>
+              <div className="mt-6">
+                <button className="w-full inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-5 py-3 text-[14px] font-medium transition-all active:scale-95">
+                  면접 시작
+                </button>
               </div>
             </div>
+          </Link>
+
+          <Link href="/result" className="block">
+            <div className="glass-card rounded-3xl p-6 flex flex-col justify-between min-h-[240px] group cursor-pointer hover:border-purple-200 transition-all relative overflow-hidden hover:-translate-y-1 hover:shadow-xl duration-300">
+              {/* Abstract shape decoration */}
+              <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all"></div>
+
+              <div>
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mb-4">
+                  <FileText size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">결과 분석 보기</h3>
+                <p className="text-gray-500 mt-2 max-w-sm">
+                  이전 면접 결과와 AI 분석을 확인하고 개선점을 파악하세요.
+                </p>
+              </div>
+              <div className="mt-6">
+                <button className="w-full inline-flex items-center justify-center bg-white text-[#0071e3] hover:bg-gray-50 border border-gray-200/50 rounded-full px-5 py-3 text-[14px] font-medium transition-all active:scale-95">
+                  결과 확인
+                </button>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* Recent History */}
+        {interviewHistory && interviewHistory.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900 px-1">최근 면접 기록</h2>
             <div className="space-y-3">
-              {interviewHistory.map((interview, index) => {
+              {interviewHistory.map((interview) => {
                 const feedback = interview.ai_feedback as {
                   score?: number
                   summary?: string
@@ -139,41 +171,55 @@ export default async function UserDashboard() {
                 })
 
                 return (
-                  <Link
-                    key={interview.id}
-                    href={`/result/${interview.id}`}
-                    className="block"
-                  >
-                    <div className="p-6 rounded-2xl border border-border/50 bg-white/50 backdrop-blur-sm hover:border-primary hover:bg-white/80 hover:shadow-soft transition-all cursor-pointer group">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground font-medium">{date}</span>
+                  <Link key={interview.id} href={`/result/${interview.id}`} className="block">
+                    <div className="glass-card rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 group cursor-pointer hover:bg-white/80 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-gray-600 transition-colors">
+                          <Calendar size={20} />
                         </div>
-                        {feedback.score && (
-                          <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-glow">
-                            <TrendingUp className="h-4 w-4" />
-                            <span className="text-lg font-bold">
-                              {feedback.score}
-                            </span>
-                          </div>
-                        )}
+                        <div>
+                          <h4 className="font-semibold text-gray-900">
+                            {feedback.summary ? feedback.summary.slice(0, 30) + '...' : '면접 결과'}
+                          </h4>
+                          <p className="text-sm text-gray-500 line-clamp-1 max-w-md">
+                            {feedback.summary || '상세 분석 결과를 확인하세요'}
+                          </p>
+                          <span className="text-xs text-gray-400 mt-1 block">{date}</span>
+                        </div>
                       </div>
-                      {feedback.summary && (
-                        <p className="text-sm text-foreground line-clamp-2 leading-relaxed group-hover:text-primary transition-colors">
-                          {feedback.summary}
-                        </p>
-                      )}
-                      {!feedback.summary && (
-                        <p className="text-sm text-muted-foreground">
-                          면접 #{index + 1} - 결과 보기
-                        </p>
-                      )}
+
+                      <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+                        <div className="text-right">
+                          <div className={`text-lg font-bold ${feedback.score && feedback.score >= 80 ? 'text-green-600' : 'text-[#0071e3]'}`}>
+                            {feedback.score || '-'}
+                          </div>
+                          <div className="text-xs text-gray-400">점수</div>
+                        </div>
+                        <div className="text-gray-300 group-hover:text-gray-600 transition-colors">
+                          <ChevronRight size={20} />
+                        </div>
+                      </div>
                     </div>
                   </Link>
                 )
               })}
             </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {(!interviewHistory || interviewHistory.length === 0) && (
+          <div className="glass-card rounded-3xl p-12 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Play size={32} className="text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">첫 면접을 시작해보세요</h3>
+            <p className="text-gray-500 mb-6">AI와 함께 실전 같은 면접 연습을 시작하세요.</p>
+            <Link href="/interview">
+              <button className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-8 py-3 text-[17px] font-medium transition-all active:scale-95">
+                면접 시작하기
+              </button>
+            </Link>
           </div>
         )}
       </div>

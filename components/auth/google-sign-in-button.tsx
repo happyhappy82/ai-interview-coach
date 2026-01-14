@@ -2,10 +2,13 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 
-export function GoogleSignInButton() {
+interface GoogleSignInButtonProps {
+  variant?: 'default' | 'compact' | 'dark'
+}
+
+export function GoogleSignInButton({ variant = 'default' }: GoogleSignInButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleSignIn = async () => {
@@ -36,12 +39,54 @@ export function GoogleSignInButton() {
     }
   }
 
+  // Compact variant for navbar
+  if (variant === 'compact') {
+    return (
+      <button
+        onClick={handleGoogleSignIn}
+        disabled={isLoading}
+        className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-3 py-1 text-[12px] font-medium transition-all duration-300 active:scale-95 disabled:opacity-50"
+      >
+        {isLoading ? (
+          <Loader2 className="h-3 w-3 animate-spin" />
+        ) : (
+          '시작하기'
+        )}
+      </button>
+    )
+  }
+
+  // Dark variant for dark backgrounds
+  if (variant === 'dark') {
+    return (
+      <button
+        onClick={handleGoogleSignIn}
+        disabled={isLoading}
+        className="inline-flex items-center justify-center bg-white text-black hover:bg-gray-200 rounded-full px-8 py-3 text-[17px] font-medium transition-all duration-300 active:scale-95 disabled:opacity-50"
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            로딩...
+          </>
+        ) : (
+          <>
+            시작하기
+            <svg className="ml-2 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+          </>
+        )}
+      </button>
+    )
+  }
+
+  // Default variant
   return (
-    <Button
+    <button
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full px-8 py-7 rounded-2xl font-semibold text-base shadow-soft hover:shadow-glow transition-all duration-300"
-      size="lg"
+      className="inline-flex items-center justify-center bg-[#0071e3] text-white hover:bg-[#0077ed] rounded-full px-8 py-3 text-[17px] font-medium transition-all duration-300 active:scale-95 disabled:opacity-50 min-w-[180px]"
     >
       {isLoading ? (
         <>
@@ -59,6 +104,6 @@ export function GoogleSignInButton() {
           Google로 시작하기
         </>
       )}
-    </Button>
+    </button>
   )
 }
