@@ -15,13 +15,7 @@ export function ResultActions({ resultId, score, summary }: ResultActionsProps) 
 
   // 인쇄 대화상자 열기 (PDF 저장은 인쇄 창에서 선택)
   const handlePrint = () => {
-    toast({
-      title: '인쇄 창을 엽니다',
-      description: 'PDF로 저장하려면 프린터를 "PDF로 저장"으로 선택하세요.',
-    })
-    setTimeout(() => {
-      window.print()
-    }, 300)
+    window.print()
   }
 
   const handleShare = async () => {
