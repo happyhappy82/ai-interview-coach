@@ -154,17 +154,38 @@
     color-adjust: exact !important;
   }
 
-  body {
+  html, body {
     background: white !important;
     font-family: 'Malgun Gothic', '맑은 고딕', system-ui, -apple-system, sans-serif !important;
     margin: 0 !important;
     padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
   }
 
-  /* 결과 페이지: 콘텐츠 영역만 표시 */
+  /* 전체 페이지 컨테이너 */
+  .min-h-screen {
+    min-height: auto !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  /* max-w 컨테이너 */
+  .max-w-5xl, .max-w-4xl {
+    max-width: 100% !important;
+    padding: 10px !important;
+    margin: 0 !important;
+  }
+
+  /* 결과 페이지: 콘텐츠 영역 */
   #result-content {
     margin: 0 !important;
-    padding: 20px !important;
+    padding: 0 !important;
+  }
+
+  /* space-y 간격 제거 */
+  .space-y-6 > * + * {
+    margin-top: 12px !important;
   }
 
   /* 불필요한 요소 숨기기 */
@@ -172,17 +193,18 @@
   .no-print,
   a[href="/dashboard"],
   a[href="/interview"],
-  a[href="/expert"] {
+  a[href="/expert"],
+  .animate-fade-in > .flex.items-center.justify-between:first-child {
     display: none !important;
   }
 
-  /* 버튼들 숨기기 (인쇄/공유/다시 면접 보기 등) */
-  button:not(#result-content button),
+  /* 버튼들 숨기기 */
+  button,
   .grid.sm\:grid-cols-2 {
     display: none !important;
   }
 
-  /* 오디오 플레이어 숨기기 (인쇄 시 의미 없음) */
+  /* 오디오 플레이어 숨기기 */
   audio {
     display: none !important;
   }
@@ -193,14 +215,30 @@
     display: none !important;
   }
 
-  /* Glass 효과를 흰색 배경으로 */
+  /* Glass 카드 스타일 */
   .glass,
   .glass-panel,
   .glass-card {
     background: white !important;
     backdrop-filter: none !important;
-    border: 1px solid #e5e7eb !important;
+    border: 1px solid #d1d5db !important;
     box-shadow: none !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* 카드 내부 패딩 축소 */
+  .glass-card.rounded-3xl {
+    padding: 16px !important;
+  }
+
+  .glass-card .p-6,
+  .glass-card .p-8,
+  .glass-card .p-10,
+  .glass-card .md\:p-10,
+  .glass-card .md\:p-8 {
+    padding: 12px !important;
   }
 
   /* 그라데이션 텍스트를 일반 텍스트로 */
@@ -211,23 +249,19 @@
     background-clip: unset !important;
   }
 
-  /* 페이지 나눔 설정 - 자연스럽게 나눔 허용 */
+  /* 페이지 나눔 - 콘텐츠 자연스럽게 흐르게 */
   .glass-card {
-    page-break-inside: auto;
-    break-inside: auto;
-  }
-
-  /* 각 섹션 간격 최소화 */
-  #result-content .space-y-6 {
-    gap: 16px !important;
-  }
-
-  #result-content > .space-y-6 > * {
-    margin-bottom: 16px !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
   }
 
   /* 링크 URL 표시 안함 */
   a::after {
     content: none !important;
+  }
+
+  /* 헤더 링크 숨기기 */
+  a[href="/dashboard"] {
+    display: none !important;
   }
 }
