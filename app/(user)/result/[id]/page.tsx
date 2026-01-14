@@ -187,8 +187,8 @@ export default async function ResultDetailPage({
   })
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] p-2 sm:p-4 md:p-6 lg:p-12">
-      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
+    <div className="min-h-screen bg-[#F5F5F7] p-1 sm:p-2 md:p-6 lg:p-12">
+      <div className="max-w-5xl mx-auto space-y-3 sm:space-y-4 md:space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Link href="/dashboard">
@@ -202,7 +202,7 @@ export default async function ResultDetailPage({
         {/* Result Content - PDF 캡처 영역 */}
         <div id="result-content" className="space-y-4 sm:space-y-6">
           {/* Title & Score */}
-          <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
+          <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
               <div className="space-y-2">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
@@ -234,7 +234,7 @@ export default async function ResultDetailPage({
 
           {/* 문항별 피드백 */}
           {feedback.questionFeedbacks && feedback.questionFeedbacks.length > 0 && (
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8">
               <div className="flex items-center space-x-3 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center">
                   <span className="text-2xl">📝</span>
@@ -313,25 +313,21 @@ export default async function ResultDetailPage({
 
           {/* Good Points - 총평 */}
           {feedback.good && feedback.good.length > 0 && (
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
-                  <CheckCircle2 className="h-6 w-6 text-green-600" />
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8">
+              <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+                <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900">잘한 점 (총평)</h3>
-                  <p className="text-sm text-gray-500">전체 면접에서 강점으로 부각된 부분입니다</p>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900">잘한 점</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">전체 면접에서 강점으로 부각된 부분입니다</p>
                 </div>
               </div>
-              <ul className="space-y-4">
+              <ul className="space-y-3 sm:space-y-4">
                 {feedback.good.map((point, index) => (
-                  <li key={index} className="flex items-start space-x-4 group">
-                    <div className="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-green-600 text-sm font-bold">
-                        {index + 1}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-relaxed text-gray-700 pt-1">{point}</p>
+                  <li key={index} className="flex items-start space-x-2 sm:space-x-3">
+                    <span className="text-green-600 text-sm font-bold flex-shrink-0">{index + 1}.</span>
+                    <p className="text-sm leading-relaxed text-gray-700">{point}</p>
                   </li>
                 ))}
               </ul>
@@ -340,25 +336,21 @@ export default async function ResultDetailPage({
 
           {/* Improvement Points - 총평 */}
           {feedback.bad && feedback.bad.length > 0 && (
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center">
-                  <XCircle className="h-6 w-6 text-orange-600" />
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8">
+              <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+                <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-100 flex items-center justify-center">
+                  <XCircle className="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900">개선할 점 (총평)</h3>
-                  <p className="text-sm text-gray-500">전체 면접에서 보완하면 더 좋을 부분입니다</p>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900">개선할 점</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">전체 면접에서 보완하면 더 좋을 부분입니다</p>
                 </div>
               </div>
-              <ul className="space-y-4">
+              <ul className="space-y-3 sm:space-y-4">
                 {feedback.bad.map((point, index) => (
-                  <li key={index} className="flex items-start space-x-4 group">
-                    <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-orange-600 text-sm font-bold">
-                        {index + 1}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-relaxed text-gray-700 pt-1">{point}</p>
+                  <li key={index} className="flex items-start space-x-2 sm:space-x-3">
+                    <span className="text-orange-600 text-sm font-bold flex-shrink-0">{index + 1}.</span>
+                    <p className="text-sm leading-relaxed text-gray-700">{point}</p>
                   </li>
                 ))}
               </ul>
@@ -367,7 +359,7 @@ export default async function ResultDetailPage({
 
           {/* Keywords */}
           {feedback.keywords && feedback.keywords.length > 0 && (
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
                   <Tag className="h-6 w-6 text-[#0071e3]" />
@@ -392,7 +384,7 @@ export default async function ResultDetailPage({
 
           {/* Raw Feedback (디버깅용 - JSON 파싱 실패 시 표시) */}
           {feedback.raw && (!feedback.good || feedback.good.length === 0) && (
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 border-2 border-yellow-200 bg-yellow-50/50">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8 border-2 border-yellow-200 bg-yellow-50/50">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center">
                   <AlertCircle className="h-6 w-6 text-yellow-600" />
@@ -410,7 +402,7 @@ export default async function ResultDetailPage({
 
           {/* 질문별 답변 & 오디오 */}
           {feedback.answers && feedback.answers.length > 0 && (
-            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-8">
               <div className="flex items-center space-x-3 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center">
                   <span className="text-2xl">🎧</span>
