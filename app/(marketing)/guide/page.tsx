@@ -157,12 +157,6 @@ export default function GuidePage() {
                 </p>
               </div>
               <div className="bg-white rounded-2xl p-6 border border-gray-100/50">
-                <h3 className="font-semibold text-[#1d1d1f] mb-2">녹음된 답변은 어떻게 처리되나요?</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  녹음된 답변은 안전하게 암호화되어 저장되며, 본인만 접근할 수 있습니다. 원하시면 언제든지 삭제할 수 있습니다.
-                </p>
-              </div>
-              <div className="bg-white rounded-2xl p-6 border border-gray-100/50">
                 <h3 className="font-semibold text-[#1d1d1f] mb-2">모바일에서도 사용할 수 있나요?</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">
                   네, 모바일 브라우저에서도 완벽하게 동작합니다. 어디서든 스마트폰으로 면접 연습을 할 수 있습니다.
