@@ -245,66 +245,62 @@ export default async function ResultDetailPage({
                 </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {feedback.questionFeedbacks.map((qf, index) => (
-                  <div key={index} className="p-6 rounded-2xl bg-white border border-gray-100 space-y-4">
-                    {/* 질문 제목 */}
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-purple-600 text-sm font-bold">Q{index + 1}</span>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-lg text-gray-900 mb-2">{qf.questionTitle}</h4>
-                        {qf.score !== undefined && (
-                          <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#0071e3] text-white text-sm font-semibold mb-3">
-                            {qf.score}점
-                          </div>
-                        )}
-                      </div>
+                  <div key={index} className="p-3 sm:p-6 rounded-xl sm:rounded-2xl bg-white border border-gray-100 space-y-3 sm:space-y-4">
+                    {/* 질문 제목 - Q 배지 인라인 */}
+                    <div className="flex items-center space-x-2">
+                      <span className="text-purple-600 text-sm font-bold">Q{index + 1}</span>
+                      <h4 className="font-bold text-base sm:text-lg text-gray-900">{qf.questionTitle}</h4>
                     </div>
 
-                    {/* 상세 피드백 */}
-                    <div className="pl-11">
-                      <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 mb-4">
-                        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{qf.feedback}</p>
+                    {/* 점수 */}
+                    {qf.score !== undefined && (
+                      <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#0071e3] text-white text-sm font-semibold">
+                        {qf.score}점
                       </div>
+                    )}
 
-                      {/* 강점 */}
-                      {qf.strengths && qf.strengths.length > 0 && (
-                        <div className="mb-3">
-                          <p className="text-xs font-semibold text-green-600 mb-2 flex items-center">
-                            <CheckCircle2 className="h-3 w-3 mr-1" />
-                            잘한 점
-                          </p>
-                          <ul className="space-y-1.5">
-                            {qf.strengths.map((strength, idx) => (
-                              <li key={idx} className="flex items-start space-x-2">
-                                <span className="text-green-500 text-xs mt-0.5">•</span>
-                                <span className="text-xs text-gray-600">{strength}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {/* 개선점 */}
-                      {qf.improvements && qf.improvements.length > 0 && (
-                        <div>
-                          <p className="text-xs font-semibold text-orange-600 mb-2 flex items-center">
-                            <AlertCircle className="h-3 w-3 mr-1" />
-                            개선할 점
-                          </p>
-                          <ul className="space-y-1.5">
-                            {qf.improvements.map((improvement, idx) => (
-                              <li key={idx} className="flex items-start space-x-2">
-                                <span className="text-orange-500 text-xs mt-0.5">•</span>
-                                <span className="text-xs text-gray-600">{improvement}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                    {/* 상세 피드백 - 전체 너비 */}
+                    <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gray-50 border border-gray-100">
+                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{qf.feedback}</p>
                     </div>
+
+                    {/* 강점 - 전체 너비 */}
+                    {qf.strengths && qf.strengths.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold text-green-600 mb-2 flex items-center">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          잘한 점
+                        </p>
+                        <ul className="space-y-1.5">
+                          {qf.strengths.map((strength, idx) => (
+                            <li key={idx} className="flex items-start space-x-2">
+                              <span className="text-green-500 text-xs mt-0.5">•</span>
+                              <span className="text-xs text-gray-600">{strength}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* 개선점 - 전체 너비 */}
+                    {qf.improvements && qf.improvements.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold text-orange-600 mb-2 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          개선할 점
+                        </p>
+                        <ul className="space-y-1.5">
+                          {qf.improvements.map((improvement, idx) => (
+                            <li key={idx} className="flex items-start space-x-2">
+                              <span className="text-orange-500 text-xs mt-0.5">•</span>
+                              <span className="text-xs text-gray-600">{improvement}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
