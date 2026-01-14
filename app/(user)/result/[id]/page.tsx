@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, CheckCircle2, XCircle, Tag, AlertCircle, Clock, Play } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { ResultActions } from '@/components/result/result-actions'
+import { TranscriptToggle } from '@/components/result/transcript-toggle'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
@@ -186,8 +187,8 @@ export default async function ResultDetailPage({
   })
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6 lg:p-12">
-      <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
+    <div className="min-h-screen bg-[#F5F5F7] p-2 sm:p-4 md:p-6 lg:p-12">
+      <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Link href="/dashboard">
@@ -199,9 +200,9 @@ export default async function ResultDetailPage({
         </div>
 
         {/* Result Content - PDF 캡처 영역 */}
-        <div id="result-content" className="space-y-6">
+        <div id="result-content" className="space-y-4 sm:space-y-6">
           {/* Title & Score */}
-          <div className="glass-card rounded-3xl p-6 md:p-10">
+          <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
               <div className="space-y-2">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
@@ -233,7 +234,7 @@ export default async function ResultDetailPage({
 
           {/* 문항별 피드백 */}
           {feedback.questionFeedbacks && feedback.questionFeedbacks.length > 0 && (
-            <div className="glass-card rounded-3xl p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
               <div className="flex items-center space-x-3 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center">
                   <span className="text-2xl">📝</span>
@@ -312,7 +313,7 @@ export default async function ResultDetailPage({
 
           {/* Good Points - 총평 */}
           {feedback.good && feedback.good.length > 0 && (
-            <div className="glass-card rounded-3xl p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
                   <CheckCircle2 className="h-6 w-6 text-green-600" />
@@ -339,7 +340,7 @@ export default async function ResultDetailPage({
 
           {/* Improvement Points - 총평 */}
           {feedback.bad && feedback.bad.length > 0 && (
-            <div className="glass-card rounded-3xl p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center">
                   <XCircle className="h-6 w-6 text-orange-600" />
@@ -366,7 +367,7 @@ export default async function ResultDetailPage({
 
           {/* Keywords */}
           {feedback.keywords && feedback.keywords.length > 0 && (
-            <div className="glass-card rounded-3xl p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
                   <Tag className="h-6 w-6 text-[#0071e3]" />
@@ -391,7 +392,7 @@ export default async function ResultDetailPage({
 
           {/* Raw Feedback (디버깅용 - JSON 파싱 실패 시 표시) */}
           {feedback.raw && (!feedback.good || feedback.good.length === 0) && (
-            <div className="glass-card rounded-3xl p-6 md:p-10 border-2 border-yellow-200 bg-yellow-50/50">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 border-2 border-yellow-200 bg-yellow-50/50">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center">
                   <AlertCircle className="h-6 w-6 text-yellow-600" />
@@ -409,7 +410,7 @@ export default async function ResultDetailPage({
 
           {/* 질문별 답변 & 오디오 */}
           {feedback.answers && feedback.answers.length > 0 && (
-            <div className="glass-card rounded-3xl p-6 md:p-10">
+            <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10">
               <div className="flex items-center space-x-3 mb-8">
                 <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center">
                   <span className="text-2xl">🎧</span>
@@ -437,10 +438,7 @@ export default async function ResultDetailPage({
                           </div>
                         )}
                         {answer.transcript && (
-                          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                            <p className="text-xs text-gray-500 font-semibold mb-2">녹취록</p>
-                            <p className="text-sm text-gray-600 leading-relaxed">{answer.transcript}</p>
-                          </div>
+                          <TranscriptToggle transcript={answer.transcript} />
                         )}
                       </div>
                     </div>
