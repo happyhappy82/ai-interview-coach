@@ -128,7 +128,7 @@ export async function POST(request: Request) {
 200자 이내로 간결하게 작성하고, 백틱이나 마크다운 없이 순수 텍스트만 출력하세요.`
 
           const geminiResponse = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiApiKey}`,
             {
               method: 'POST',
               headers: {
