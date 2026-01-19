@@ -15,6 +15,39 @@ interface Answer {
   duration: number
 }
 
+type InterviewType = 'custom' | 'company' | 'cover-letter'
+
+// 면접 타입별 평가 스타일 프롬프트
+const getEvaluationStyle = (interviewType: InterviewType, companyName?: string) => {
+  if (interviewType === 'custom') {
+    // 커스텀 면접: 격려하고 칭찬 위주
+    return {
+      questionPromptPrefix: `당신은 따뜻하고 격려하는 면접 코치입니다. 지원자의 답변에서 좋은 점을 최대한 찾아주고, 자신감을 북돋아 주세요.
+긍정적인 피드백을 우선으로 하되, 개선점은 부드럽게 제안하세요.
+점수는 70점 이상으로 후하게 주세요.`,
+      overallPromptPrefix: `당신은 따뜻하고 격려하는 면접 코치입니다.
+전체적으로 지원자가 잘한 점들을 강조하고, 자신감을 가질 수 있도록 긍정적인 종합 평가를 해주세요.
+개선점은 "이렇게 하면 더 좋을 것 같아요" 식으로 부드럽게 제안하세요.`,
+    }
+  } else {
+    // 대기업/자소서 면접: 깐깐하고 엄격하게
+    const contextInfo = companyName ? `${companyName} 면접관` : '대기업 면접관'
+    return {
+      questionPromptPrefix: `당신은 ${contextInfo}입니다. 매우 엄격하고 깐깐하게 평가합니다.
+답변의 구체성, 논리성, 직무 연관성을 철저히 검증하세요.
+모호한 답변, 추상적인 표현, 검증되지 않은 주장에 대해 날카롭게 지적하세요.
+실제 면접에서 탈락할 수 있는 요소들을 구체적으로 짚어주세요.
+점수는 60점 기준으로 엄격하게 매기세요. 정말 잘한 경우에만 80점 이상을 주세요.
+강점보다 개선점을 더 상세하게 작성하세요.`,
+      overallPromptPrefix: `당신은 ${contextInfo}입니다. 매우 엄격하고 깐깐하게 평가합니다.
+지원자가 실제 면접에서 합격하려면 무엇을 개선해야 하는지 솔직하게 피드백하세요.
+좋은 점도 언급하되, 개선이 필요한 부분을 더 강조하세요.
+"이 정도로는 부족합니다", "더 구체적인 사례가 필요합니다" 같은 직접적인 피드백을 주세요.
+전체 점수는 60-75점 사이로 엄격하게 매기세요. 정말 뛰어난 경우에만 80점 이상을 주세요.`,
+    }
+  }
+}
+
 export async function POST(request: Request) {
   try {
     console.log('=== 일괄 분석 API 시작 ===')
@@ -33,9 +66,12 @@ export async function POST(request: Request) {
     console.log('User ID:', user.id)
 
     const body = await request.json()
-    const { answers }: { answers: Answer[] } = body
+    const { answers, interviewType = 'custom', companyName }: { answers: Answer[], interviewType?: InterviewType, companyName?: string } = body
 
-    console.log(`총 ${answers.length}개 답변 분석 시작`)
+    console.log(`총 ${answers.length}개 답변 분석 시작 (타입: ${interviewType})`)
+
+    // 면접 타입에 따른 평가 스타일 가져오기
+    const evaluationStyle = getEvaluationStyle(interviewType, companyName)
 
     if (!answers || answers.length === 0) {
       console.error('답변 없음')
@@ -92,10 +128,16 @@ export async function POST(request: Request) {
       // 이 질문의 평가 기준 가져오기
       const evaluationContext = questionContextMap.get(answer.questionId) || '이 질문에 대한 답변을 STAR 기법에 따라 평가하세요.'
 
-      const questionPrompt = `${evaluationContext}
+      const questionPrompt = `${evaluationStyle.questionPromptPrefix}
 
-면접 질문: ${answer.questionTitle}
-면접자의 답변: ${answer.transcript || '(음성 인식 실패)'}
+[평가 기준]
+${evaluationContext}
+
+[면접 질문]
+${answer.questionTitle}
+
+[면접자의 답변]
+${answer.transcript || '(음성 인식 실패)'}
 
 위 답변을 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요:
 
@@ -103,7 +145,7 @@ export async function POST(request: Request) {
   "feedback": "이 답변에 대한 상세 평가 (3-5문장)",
   "strengths": ["강점 1", "강점 2"],
   "improvements": ["개선점 1", "개선점 2"],
-  "score": 80
+  "score": 점수(0-100)
 }
 
 중요: 백틱 없이 { 로 시작하는 순수 JSON만 출력하세요.`
@@ -184,8 +226,9 @@ export async function POST(request: Request) {
       keywords: ["키워드1", "키워드2", "키워드3"]
     }
 
-    const overallPrompt = `다음은 면접자의 전체 답변입니다:
+    const overallPrompt = `${evaluationStyle.overallPromptPrefix}
 
+[면접자의 전체 답변]
 ${allAnswersText}
 
 위 전체 답변을 종합적으로 분석하여 **반드시 아래 형식의 순수 JSON만** 출력하세요:

@@ -430,6 +430,13 @@ export default function InterviewPage() {
         description: 'AI가 전체 답변을 분석 중입니다...',
       })
 
+      // 면접 타입 결정: company(기업), cover-letter(자소서), custom(커스텀)
+      const interviewType = selectedCompany
+        ? 'company'
+        : questions[0]?.category === 'cover-letter'
+          ? 'cover-letter'
+          : 'custom'
+
       // 일괄 AI 분석 호출
       const batchAnalyzeResponse = await fetch('/api/batch-analyze', {
         method: 'POST',
@@ -438,6 +445,8 @@ export default function InterviewPage() {
         },
         body: JSON.stringify({
           answers: uploadedAnswers,
+          interviewType,
+          companyName: selectedCompany?.name,
         }),
       })
 
