@@ -78,7 +78,7 @@ ${trimmedText}
             temperature: 0.8,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 4000,
+            maxOutputTokens: 10000,
           },
         }),
       }
