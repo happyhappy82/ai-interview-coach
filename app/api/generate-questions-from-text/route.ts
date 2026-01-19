@@ -57,6 +57,8 @@ ${text}
 }
 `
 
+    console.log(`자소서 질문 생성 요청: ${text.length}자`)
+
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
       {
@@ -70,16 +72,17 @@ ${text}
             temperature: 0.8,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 2000,
+            maxOutputTokens: 4000,
           },
         }),
       }
     )
 
     if (!geminiResponse.ok) {
-      console.error('Gemini API error:', await geminiResponse.text())
+      const errorText = await geminiResponse.text()
+      console.error('Gemini API error:', geminiResponse.status, errorText)
       return NextResponse.json(
-        { error: 'AI 질문 생성에 실패했습니다.' },
+        { error: `AI 질문 생성에 실패했습니다. (${geminiResponse.status})` },
         { status: 500 }
       )
     }
