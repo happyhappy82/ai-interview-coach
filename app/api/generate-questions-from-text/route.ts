@@ -88,7 +88,7 @@ ${trimmedText}
       const errorText = await geminiResponse.text()
       console.error('Gemini API error:', geminiResponse.status, errorText)
       return NextResponse.json(
-        { error: `AI 질문 생성에 실패했습니다. (${geminiResponse.status})` },
+        { error: `AI 질문 생성에 실패했습니다. (${geminiResponse.status}) - ${errorText}` },
         { status: 500 }
       )
     }
