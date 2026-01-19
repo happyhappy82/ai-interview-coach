@@ -1,7 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
+
+// Service role client for public data (bypasses RLS)
+function getServiceRoleClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 // GET /api/questions?category=general&company=uuid - 기본 질문 + 사용자 커스텀 질문 조회
 export async function GET(request: Request) {
@@ -10,19 +19,10 @@ export async function GET(request: Request) {
     const category = searchParams.get('category')
     const companyId = searchParams.get('company')
 
-    const supabase = await createClient()
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // 회사 ID가 지정된 경우: 해당 회사의 질문만 반환
+    // 회사 ID가 지정된 경우: service role로 조회 (RLS 우회)
     if (companyId) {
-      const { data, error } = await supabase
+      const serviceClient = getServiceRoleClient()
+      const { data, error } = await serviceClient
         .from('questions')
         .select('*')
         .eq('company_id', companyId)
@@ -40,6 +40,15 @@ export async function GET(request: Request) {
     }
 
     // 기존 로직: 기본 질문 + 사용자 커스텀 질문
+    const supabase = await createClient()
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     // 1. 사용자가 숨긴 질문 ID 목록 조회
     const { data: hiddenQuestions } = await supabase

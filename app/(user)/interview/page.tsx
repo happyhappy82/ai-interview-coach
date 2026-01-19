@@ -5,11 +5,12 @@ import { AudioRecorder } from '@/components/interview/audio-recorder'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowLeft, Loader2, Plus, X, GripVertical, Building2 } from 'lucide-react'
+import { ArrowLeft, Loader2, Plus, X, GripVertical, Building2, FileText } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { CompanyInterviewModal } from '@/components/interview/company-interview-modal'
+import { CoverLetterModal } from '@/components/interview/cover-letter-modal'
 import type { Company } from '@/types/database.types'
 
 type InterviewMode = 'question-select' | 'interview'
@@ -46,6 +47,9 @@ export default function InterviewPage() {
   // 기업 면접 모달 상태
   const [showCompanyModal, setShowCompanyModal] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+
+  // 자소서 면접 모달 상태
+  const [showCoverLetterModal, setShowCoverLetterModal] = useState(false)
 
   const [allQuestions, setAllQuestions] = useState<Question[]>([]) // 모든 질문
   const [questions, setQuestions] = useState<Question[]>([]) // 선택된 질문들
@@ -125,6 +129,20 @@ export default function InterviewPage() {
     toast({
       title: `${company.name} 면접 시작!`,
       description: `${companyQuestions.length}개 질문으로 면접을 시작합니다.`,
+    })
+  }
+
+  // 자소서 면접 시작
+  const handleStartCoverLetterInterview = (coverLetterQuestions: Question[]) => {
+    setSelectedCompany(null)
+    setQuestions(coverLetterQuestions)
+    setSelectedQuestionIds(new Set(coverLetterQuestions.map((q: Question) => q.id)))
+    setMode('interview')
+    setInterviewStarted(true)
+
+    toast({
+      title: '자소서 면접 시작!',
+      description: `${coverLetterQuestions.length}개 맞춤 질문으로 면접을 시작합니다.`,
     })
   }
 
@@ -520,6 +538,20 @@ export default function InterviewPage() {
                   </p>
                 </button>
 
+                {/* 자소서 면접 버튼 */}
+                <button
+                  onClick={() => setShowCoverLetterModal(true)}
+                  className="flex-1 p-4 rounded-2xl border border-purple-200/50 bg-purple-50/50 hover:bg-purple-50 hover:border-purple-300 transition-all group"
+                >
+                  <div className="flex items-center justify-center space-x-2 text-purple-600">
+                    <FileText className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                    <span className="font-semibold">자소서 면접 보기</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    내 자소서 기반 AI 맞춤 질문
+                  </p>
+                </button>
+
                 {/* 나만의 질문 추가 버튼 */}
                 {!showInlineForm && (
                   <button
@@ -709,6 +741,13 @@ export default function InterviewPage() {
           onOpenChange={setShowCompanyModal}
           onStartInterview={handleStartCompanyInterview}
         />
+
+        {/* 자소서 면접 모달 */}
+        <CoverLetterModal
+          open={showCoverLetterModal}
+          onOpenChange={setShowCoverLetterModal}
+          onStartInterview={handleStartCoverLetterInterview}
+        />
       </div>
     )
   }
@@ -798,7 +837,7 @@ export default function InterviewPage() {
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-amber-700 mb-1">질문 평가 포인트</p>
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
                         {currentQuestion.evaluation_context}
                       </p>
                     </div>
