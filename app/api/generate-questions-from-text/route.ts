@@ -13,6 +13,12 @@ export async function POST(request: Request) {
       )
     }
 
+    // 너무 긴 자소서는 앞부분만 사용 (토큰 한도 방지)
+    const maxLength = 6000
+    const trimmedText = text.length > maxLength
+      ? text.substring(0, maxLength) + '\n\n(이하 생략...)'
+      : text
+
     const geminiApiKey = process.env.GEMINI_API_KEY
     if (!geminiApiKey) {
       return NextResponse.json(
@@ -24,7 +30,7 @@ export async function POST(request: Request) {
     const prompt = `당신은 대한민국 대기업 면접관입니다. 아래 자기소개서를 꼼꼼히 읽고, 자소서 내용을 직접 인용하며 파고드는 질문 ${questionCount}개를 생성해주세요.
 
 [자기소개서]
-${text}
+${trimmedText}
 
 [핵심 규칙 - 반드시 지켜야 함]
 1. 모든 질문은 반드시 위 자기소개서의 구체적인 내용을 인용해야 합니다
@@ -60,7 +66,7 @@ ${text}
     console.log(`자소서 질문 생성 요청: ${text.length}자`)
 
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
       {
         method: 'POST',
         headers: {
